@@ -12,7 +12,7 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 # 
 board = [
     [ '_', '_', '_' ],
-    [ '_', '_', '_' ],_
+    [ '_', '_', '_' ],
     [ '_', '_', '_' ]
 ]
 
