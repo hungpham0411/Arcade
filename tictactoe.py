@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import *
+from cpu import findBestMove
 
 pygame.init()
 
@@ -23,6 +24,13 @@ title_rect = title.get_rect()
 title_rect.center = (300,50)
 
 screen.blit(title, title_rect)
+
+# 
+board = [
+    [ '_', '_', '_' ],
+    [ '_', '_', '_' ],_
+    [ '_', '_', '_' ]
+]
 
 game = True
 while game:
