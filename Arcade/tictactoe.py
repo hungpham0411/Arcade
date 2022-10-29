@@ -22,7 +22,9 @@ class Tictactoe(State):
         self.players = []
         self.grid = None
         self.turn = -1
-        if symbol_for_player == 'X':
+        
+        # Set the human player according the symbol_for_player attribute
+        if symbol_for_player == 'X': # If the symbol is 'X', the human player go first
             player1 = TicTacToeHumanPlayer('X')
             player2 = TicTacToeAIPlayer('O', self)
             if len(self.players) > 0:
@@ -31,7 +33,7 @@ class Tictactoe(State):
             else: 
                 self.players.append(player1)
                 self.players.append(player2)
-        else:
+        else:   # If not, the human player go second ('O')
             player1 = TicTacToeAIPlayer('X', self)
             player2 = TicTacToeHumanPlayer('O')
             if len(self.players) > 0:
@@ -40,10 +42,11 @@ class Tictactoe(State):
             else: 
                 self.players.append(player1)
                 self.players.append(player2)
+                
         self.initialize()
-        self.player_win = 0
-        self.computer_win = 0
-        self.draw = 0
+        #self.player_win = 0
+        #self.computer_win = 0
+        #self.draw = 0
 
     def initialize(self):
         self.grid = [[None, None, None], [None, None, None], [None, None, None]]
@@ -68,7 +71,7 @@ class Tictactoe(State):
         if state[2][0] is not None and state[2][0] == state[1][1] and state[2][0] == state[0][2]:
             return state[2][0]
 
-        return self.check_for_draw()  # No winner
+        return self.check_for_draw()  
     
     def check_for_draw(self):
         all_filled = True
@@ -131,12 +134,12 @@ class Tictactoe(State):
         # Draw the markers for 'X' and 'O'
         for row in range(3):
             for column in range(3):
-                if logic_board[row][column] == PLAYER1:
+                if logic_board[row][column] == PLAYER1:     # For 'X'
                     pygame.draw.line(self.game.screen, WHITE, (self.game.screen_width//2 - BOARD_SIDE/2 + row * BOARD_SIDE/3 + 35, self.game.screen_height//2 - BOARD_SIDE/2 + column * BOARD_SIDE/3 + 35), 
                                      (self.game.screen_width//2 - BOARD_SIDE/2 + row * BOARD_SIDE/3 + 115, self.game.screen_height//2 - BOARD_SIDE/2 + column * BOARD_SIDE/3 + 115), 15)
                     pygame.draw.line(self.game.screen, WHITE, (self.game.screen_width//2 - BOARD_SIDE/2 + row * BOARD_SIDE/3 + 115, self.game.screen_height//2 - BOARD_SIDE/2 + column * BOARD_SIDE/3 + 35), 
                                      (self.game.screen_width//2 - BOARD_SIDE/2 + row * BOARD_SIDE/3 + 35, self.game.screen_height//2 - BOARD_SIDE/2 + column * BOARD_SIDE/3 + 115), 15)
-                elif logic_board[row][column] == PLAYER2:
+                elif logic_board[row][column] == PLAYER2:   # For 'O'
                     pygame.draw.circle(self.game.screen, WHITE, (self.game.screen_width//2 - BOARD_SIDE/2 + row * BOARD_SIDE/3 + 80, self.game.screen_height//2 - BOARD_SIDE/2 + column * BOARD_SIDE/3 + 75), 50, 15)
         
         # Score board
@@ -161,16 +164,19 @@ class Tictactoe(State):
         back_button = button.Button(self.game.screen_width - BUTTON_WIDTH - 10, 10, 
                                  "Back", self.get_font(17), BLACK, BLUE, self.game.screen, BUTTON_WIDTH, BUTTON_HEIGHT)
         
+        # Option for the human player to go first (as 'X')
         if X_button.draw_button(self.game.screen) == True:
             self.game.state_stack.pop()
             new_state = Tictactoe(self.game, 'X')
             new_state.enter_state()
-            
+        
+        # Option for the human player to go second (as 'O')
         if O_button.draw_button(self.game.screen) == True:
             self.game.state_stack.pop()
             new_state = Tictactoe(self.game, 'O')
             new_state.enter_state() 
         
+        # Back button to return to the game hub screen
         if back_button.draw_button(self.game.screen) == True:
             new_state = self.prev_state
             self.game.state_stack.pop()
@@ -197,16 +203,19 @@ class Tictactoe(State):
                     pos = pygame.mouse.get_pos()
                     cell_x = pos[0] // 150 - 3 # The column of the move
                     cell_y = pos[1] // 150 - 1 # The row of the move
-                    if cell_y > 2 or cell_x > 2:
-                        pass
-                    else:
+                    
+                    # Check if the moves are in the board or outside of the board
+                    if 0 <= cell_x <= 2 and 0 <= cell_y <= 2:
                         if self.grid[cell_y][cell_x] is not None:
                             pass
                         else:
                             self.grid[cell_y][cell_x] = player_char
                             self.next_player()
+                    else:
+                        pass
                     result = self.check_for_winner()
-                    #Check if the human win
+                    
+                    #Check if the human player win
                     if result == player_char:
                         if result == PLAYER1:
                             label = myfont.render("Player 1 wins", 1, WHITE)
@@ -218,6 +227,7 @@ class Tictactoe(State):
                             self.game.screen.blit(label, (self.game.screen_width//2 - BOARD_SIDE + 30, 40))
                             #self.player_win += 1
                             self.game.game_over = True
+                            
                     #Check for draw
                     elif result == True:
                         label = myfont.render("Draw!!", 1, WHITE)
@@ -232,7 +242,8 @@ class Tictactoe(State):
             move = player.get_move()
             self.place_token(move)
             result = self.check_for_winner()
-            #Check if the AI win
+            
+            #Check if the AI player win
             if result == player_char:
                 if result == PLAYER1:
                     label = myfont.render("Player 1 wins", 1, WHITE)
@@ -244,6 +255,7 @@ class Tictactoe(State):
                     self.game.screen.blit(label, (self.game.screen_width//2 - BOARD_SIDE + 30, 40))
                     #self.player_win += 1
                     self.game.game_over = True
+                    
             #Check for draw
             elif result == True: 
                 label = myfont.render("Draw!!", 1, WHITE)

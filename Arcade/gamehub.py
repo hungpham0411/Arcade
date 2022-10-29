@@ -40,14 +40,19 @@ class Gamehub(State):
             self.game.screen.fill((0,0,0))
             pygame.display.update()
             pygame.time.wait(300)
+            
         if connectfour_button.draw_button(self.game.screen) == True:
             pass
+        
         if checkers_button.draw_button(self.game.screen) == True:
             pass
+        
         if pong_button.draw_button(self.game.screen) == True:
             pass
+        
         if battleship_button.draw_button(self.game.screen) == True:
             pass
+        
         if back_button.draw_button(self.game.screen) == True:
             while len(self.game.state_stack) > 1:
                 self.game.state_stack.pop()
