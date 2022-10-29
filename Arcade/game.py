@@ -41,12 +41,6 @@ class Game():
     def get_events(self):
         self.state_stack[-1].get_events()
 
-        #def draw_text(self, surface, text, color, x, y):
-            #text_surface = self.font.render(text, True, color)
-            #text_rect = text_surface.get_rect()
-            #text_rect.center = (x, y)
-            #surface.blit(text_surface, text_rect)
-
     # Load the states
     def load_states(self):
         self.title_screen = GameMenu(self)
