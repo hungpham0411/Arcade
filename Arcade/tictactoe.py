@@ -16,12 +16,13 @@ PLAYER1 = 'X'
 PLAYER2 = 'O'
 
 class Tictactoe(State):
-    def __init__(self, game, symbol_for_player):
+    def __init__(self, game, symbol_for_player, max_depth_AI):
         State.__init__(self, game)
         self.load_assets()
         self.players = []
         self.grid = None
         self.turn = -1
+        self.max_depth_AI = max_depth_AI
         
         # Set the human player according the symbol_for_player attribute
         if symbol_for_player == 'X': # If the symbol is 'X', the human player go first
@@ -112,26 +113,26 @@ class Tictactoe(State):
         pygame.draw.rect(self.game.screen, BLACK, visual_board)
         
         # Vertical border
-        line1 = pygame.Rect(self.game.screen_width//2 - BOARD_SIDE/2, self.game.screen_height//2 - BOARD_SIDE/2, 6, BOARD_SIDE)
-        line2 = pygame.Rect(self.game.screen_width//2 + BOARD_SIDE/2, self.game.screen_height//2 - BOARD_SIDE/2, 6, BOARD_SIDE)
+        vertical_line_left = pygame.Rect(self.game.screen_width//2 - BOARD_SIDE/2, self.game.screen_height//2 - BOARD_SIDE/2, 6, BOARD_SIDE)
+        vertical_line_right = pygame.Rect(self.game.screen_width//2 + BOARD_SIDE/2, self.game.screen_height//2 - BOARD_SIDE/2, 6, BOARD_SIDE)
         
         # Horizontal border
-        line3 = pygame.Rect(self.game.screen_width//2 - BOARD_SIDE/2, self.game.screen_height//2 - BOARD_SIDE/2, BOARD_SIDE, 6)
-        line4 = pygame.Rect(self.game.screen_width//2 - BOARD_SIDE/2, self.game.screen_height//2 + BOARD_SIDE/2, BOARD_SIDE + 10, 6)
+        horizontal_line_up = pygame.Rect(self.game.screen_width//2 - BOARD_SIDE/2, self.game.screen_height//2 - BOARD_SIDE/2, BOARD_SIDE, 6)
+        horizontal_line_down = pygame.Rect(self.game.screen_width//2 - BOARD_SIDE/2, self.game.screen_height//2 + BOARD_SIDE/2, BOARD_SIDE + 10, 6)
 
-        pygame.draw.rect(self.game.screen, WHITE, line1)
-        pygame.draw.rect(self.game.screen, WHITE, line2)
-        pygame.draw.rect(self.game.screen, WHITE, line3)
-        pygame.draw.rect(self.game.screen, WHITE, line4)
+        pygame.draw.rect(self.game.screen, WHITE, vertical_line_left)
+        pygame.draw.rect(self.game.screen, WHITE, vertical_line_right)
+        pygame.draw.rect(self.game.screen, WHITE, horizontal_line_up)
+        pygame.draw.rect(self.game.screen, WHITE, horizontal_line_down)
         
-        # Draw the lines inside the board
+        # Lines inside the board
         for i in range(1,3):
             pygame.draw.line(self.game.screen, WHITE, (self.game.screen_width//2 - BOARD_SIDE/2, self.game.screen_height//2 - BOARD_SIDE/2 + i * BOARD_SIDE/3), 
                              (self.game.screen_width//2 + BOARD_SIDE/2, self.game.screen_height//2 - BOARD_SIDE/2 + i * BOARD_SIDE/3), 6) 
             pygame.draw.line(self.game.screen, WHITE, (self.game.screen_width//2 - BOARD_SIDE/2 + i * BOARD_SIDE/3, self.game.screen_height//2 - BOARD_SIDE/2), 
                              (self.game.screen_width//2 - BOARD_SIDE/2 + i * BOARD_SIDE/3, self.game.screen_height//2 + BOARD_SIDE/2), 6)
         
-        # Draw the markers for 'X' and 'O'
+        # Markers for 'X' and 'O'
         for row in range(3):
             for column in range(3):
                 if logic_board[row][column] == PLAYER1:     # For 'X'
@@ -165,22 +166,20 @@ class Tictactoe(State):
                                  "Back", self.get_font(17), BLACK, BLUE, self.game.screen, BUTTON_WIDTH, BUTTON_HEIGHT)
         
         # Option for the human player to go first (as 'X')
-        if X_button.draw_button(self.game.screen) == True:
+        if X_button.interact_button(self.game.screen) == True:
             self.game.state_stack.pop()
-            new_state = Tictactoe(self.game, 'X')
+            new_state = Tictactoe(self.game, 'X', self.max_depth_AI)
             new_state.enter_state()
         
         # Option for the human player to go second (as 'O')
-        if O_button.draw_button(self.game.screen) == True:
+        if O_button.interact_button(self.game.screen) == True:
             self.game.state_stack.pop()
-            new_state = Tictactoe(self.game, 'O')
+            new_state = Tictactoe(self.game, 'O', self.max_depth_AI)
             new_state.enter_state() 
         
-        # Back button to return to the game hub screen
-        if back_button.draw_button(self.game.screen) == True:
-            new_state = self.prev_state
-            self.game.state_stack.pop()
-            new_state.enter_state()
+        # Back button to return to the tictactoe difficulty screen
+        if back_button.interact_button(self.game.screen) == True:
+            self.exit_state()   # Exit the current state which will move to the previous state
             pygame.time.wait(300)
         
         self.draw_board(self.get_grid())

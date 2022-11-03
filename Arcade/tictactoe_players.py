@@ -12,7 +12,12 @@ class TicTacToeAIPlayer:
     def __init__(self, symbol, tictactoe):
         self.symbol = symbol
         self.tictactoe = tictactoe
-        self.max_depth = 6  # Max depth for the minimax algorithm 
+        
+        # Max depth for the minimax algorithm which decides the intelligence of the AI 
+        # 1-3: Easy
+        # 4-5: Normal
+        # 6-8: Hard
+        self.max_depth = self.tictactoe.max_depth_AI
 
     def is_automated(self):
         return True

@@ -18,20 +18,24 @@ class Game():
         
         pygame.display.set_caption('Arcade')
         self.clock = pygame.time.Clock()
+        
         self.game_over = False
+        self.max_depth_AI = 0
 
+    # The main game loop
     def game_loop(self):
         while self.playing:
+            # If the game is over, restart the game
             if self.game_over == True:
                 self.state_stack.pop()
-                new_state = tictactoe.Tictactoe(self, 'X')
+                new_state = tictactoe.Tictactoe(self, 'X', self.max_depth_AI)
                 pygame.display.update()
                 pygame.time.delay(2000)
                 new_state.enter_state()
                 self.game_over = False
             self.render()
             self.get_events()
-            self.clock.tick(FPS)
+            self.clock.tick(FPS)    # Set the maximum frames per second for all windows
         pygame.quit()
                 
     def render(self):
@@ -39,6 +43,7 @@ class Game():
         self.state_stack[-1].render()
             
     def get_events(self):
+        # Call the events of the current state
         self.state_stack[-1].get_events()
 
     # Load the states

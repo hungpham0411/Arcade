@@ -17,7 +17,7 @@ class GameMenu(State):
 
     def render(self):
         # Render current state to the screen
-        self.game.screen.blit(pygame.transform.scale(self.background,(self.game.screen_width, self.game.screen_height)), (0,0))
+        self.game.screen.blit(pygame.transform.scale(self.game_menu_background,(self.game.screen_width, self.game.screen_height)), (0,0))
         self.game.screen.blit(self.title, (self.game.screen_width//2 - self.title.get_width()//2, 100))
             
         # Buttons
@@ -28,16 +28,20 @@ class GameMenu(State):
         exit_button = button.Button(self.game.screen_width//2 - BUTTON_WIDTH//2, self.game.screen_height//2 + 200, 
                                     "EXIT", self.get_font(40), PURPLE, GREEN, self.game.screen, BUTTON_WIDTH, BUTTON_HEIGHT)
 
-        # Check if the button is clicked, and what happens when it is clicked
-        if start_button.draw_button(self.game.screen) == True:
+        # Choose Start
+        if start_button.interact_button(self.game.screen) == True:
+            self.game.screen.fill((0,0,0))
             new_state = Gamehub(self.game) # Create the Gamehub state
             new_state.enter_state()
-            self.game.screen.fill((0,0,0))
             pygame.display.update()
             pygame.time.wait(300)
-        if settings_button.draw_button(self.game.screen) == True:
+
+        # Choose Settings
+        if settings_button.interact_button(self.game.screen) == True:
             pass
-        if exit_button.draw_button(self.game.screen) == True:
+
+        # Exit button to exit the game
+        if exit_button.interact_button(self.game.screen) == True:
             pygame.quit()
             sys.exit()
 
@@ -54,7 +58,7 @@ class GameMenu(State):
                     sys.exit()
 
     def load_assets(self):
-        self.background = pygame.image.load(os.path.join('Assets', 'retro_background.jpg'))
+        self.game_menu_background = pygame.image.load(os.path.join('Assets', 'retro_background.jpg'))
         self.title = pygame.image.load(os.path.join('Assets', 'title.png'))
 
     def get_font(self, size):
