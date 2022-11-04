@@ -29,14 +29,12 @@ class Tictactoe_Difficulty_Screen(State):
 
         # Choose the Normal mode
         if normal_button.interact_button(self.game.screen) == True:
-            self.game.max_depth_AI = 3
-            new_state = Tictactoe(self.game, 'X', 3) # Create the Tictactoe state with a normal AI
+            new_state = Tictactoe(self.game, 'X', 2) # Create the Tictactoe state with a normal AI
             new_state.enter_state()
             pygame.time.wait(300)
 
         # Choose the Hard mode
         if hard_button.interact_button(self.game.screen) == True:
-            self.game.max_depth_AI = 6
             new_state = Tictactoe(self.game, 'X', 6) # Create the Tictactoe state with a hard AI
             new_state.enter_state()
             pygame.time.wait(300)

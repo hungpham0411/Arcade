@@ -29,13 +29,13 @@ class Pong_Difficulty_Screen(State):
 
         # Choose the Normal mode
         if normal_button.interact_button(self.game.screen) == True:
-            new_state = Pong(self.game) # Create the Pong state with normal AI
+            new_state = Pong(self.game, 'normal') # Create the Pong state with normal AI
             new_state.enter_state()
             pygame.time.wait(300)
 
         # Choose the Hard mode
         if hard_button.interact_button(self.game.screen) == True:
-            new_state = Pong(self.game) # Create the Pong state with hard AI 
+            new_state = Pong(self.game, 'hard') # Create the Pong state with hard AI 
             new_state.enter_state()
             pygame.time.wait(300)
 

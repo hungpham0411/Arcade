@@ -73,7 +73,7 @@ class TicTacToeAIPlayer:
             return 0
         else:
             return self.evaluate(state)
-        
+    
     def evaluate(self, state):
         # Checking for Rows for X or O victory.
         value = 0
@@ -113,7 +113,6 @@ class TicTacToeAIPlayer:
         # Else if none of them have won then return 0
         return value
 
-
     def get_winner(self, state):
         for row in range(3):
             if state[row][0] is not None and state[row][0] == state[row][1] and state[row][0] == state[row][2]:
@@ -147,7 +146,7 @@ class TicTacToeAIPlayer:
             return True
         return False
     
-    def get_move(self):
+    def get_move(self):     
         return self.alpha_beta_search(self.tictactoe.get_grid())
         
     def alpha_beta_search(self, state):

@@ -1,6 +1,7 @@
 import pygame
 from game_menu import GameMenu
 import tictactoe
+import pong
 
 FPS = 60
 
@@ -19,22 +20,34 @@ class Game():
         pygame.display.set_caption('Arcade')
         self.clock = pygame.time.Clock()
         
-        self.game_over = False
-        self.max_depth_AI = 0
+        # Tic-tac-toe
+        self.tictactoe_game_over = False
+        self.tictactoe_max_depth_AI = 0
 
+        # Pong
+        self.pong_game_over = False
+        self.pong_mode = None
+        
     # The main game loop
     def game_loop(self):
         while self.playing:
             # If the game is over, restart the game
-            if self.game_over == True:
-                self.state_stack.pop()
-                new_state = tictactoe.Tictactoe(self, 'X', self.max_depth_AI)
-                pygame.display.update()
+            if self.tictactoe_game_over == True:
                 pygame.time.delay(2000)
+                self.state_stack.pop()
+                new_state = tictactoe.Tictactoe(self, 'X', self.tictactoe_max_depth_AI)
                 new_state.enter_state()
-                self.game_over = False
-            self.render()
-            self.get_events()
+                self.tictactoe_game_over = False
+                
+            if self.pong_game_over == True:
+                pygame.time.delay(2000)
+                self.state_stack.pop()
+                new_state = pong.Pong(self, self.pong_mode)
+                new_state.enter_state()
+                self.pong_game_over = False
+                
+            self.render()    
+            self.get_events()    
             self.clock.tick(FPS)    # Set the maximum frames per second for all windows
         pygame.quit()
                 

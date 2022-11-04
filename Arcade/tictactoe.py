@@ -23,6 +23,7 @@ class Tictactoe(State):
         self.grid = None
         self.turn = -1
         self.max_depth_AI = max_depth_AI
+        self.game.tictactoe_max_depth_AI = max_depth_AI
         
         # Set the human player according the symbol_for_player attribute
         if symbol_for_player == 'X': # If the symbol is 'X', the human player go first
@@ -45,9 +46,6 @@ class Tictactoe(State):
                 self.players.append(player2)
                 
         self.initialize()
-        #self.player_win = 0
-        #self.computer_win = 0
-        #self.draw = 0
 
     def initialize(self):
         self.grid = [[None, None, None], [None, None, None], [None, None, None]]
@@ -143,14 +141,6 @@ class Tictactoe(State):
                 elif logic_board[row][column] == PLAYER2:   # For 'O'
                     pygame.draw.circle(self.game.screen, WHITE, (self.game.screen_width//2 - BOARD_SIDE/2 + row * BOARD_SIDE/3 + 80, self.game.screen_height//2 - BOARD_SIDE/2 + column * BOARD_SIDE/3 + 75), 50, 15)
         
-        # Score board
-        #player = self.get_font(17)
-        #label = player.render("Player", 1, WHITE)
-        #player_score = self.get_font(25)
-        #label1 = player_score.render(str(self.player_win), 1, WHITE)
-        #self.game.screen.blit(label, (0, 10))
-        #self.game.screen.blit(label1, (40, 30))
-        
         pygame.display.update()
         
     def render(self):
@@ -187,7 +177,7 @@ class Tictactoe(State):
     def get_events(self):
         myfont = self.get_font(30)
         self.draw_board(self.get_grid())
-        self.game.game_over = False
+        self.game.tictactoe_game_over = False
         player_char = self.get_turn()
         player = self.get_player(player_char)
         
@@ -220,24 +210,24 @@ class Tictactoe(State):
                             label = myfont.render("Player 1 wins", 1, WHITE)
                             self.game.screen.blit(label, (self.game.screen_width//2 - BOARD_SIDE + 30, 40))
                             #self.player_win += 1
-                            self.game.game_over = True
+                            self.game.tictactoe_game_over = True
                         else:
                             label = myfont.render("Player 2 wins", 1, WHITE)
                             self.game.screen.blit(label, (self.game.screen_width//2 - BOARD_SIDE + 30, 40))
                             #self.player_win += 1
-                            self.game.game_over = True
+                            self.game.tictactoe_game_over = True
                             
                     #Check for draw
                     elif result == True:
                         label = myfont.render("Draw!!", 1, WHITE)
                         self.game.screen.blit(label, (self.game.screen_width//2 - BOARD_SIDE + 30, 40))
                         #self.draw += 1
-                        self.game.game_over = True
+                        self.game.tictactoe_game_over = True
                             
                     self.draw_board(self.get_grid())
                     
         #Check if the player playing is the AI
-        if player.is_automated() == True and not self.game.game_over:                
+        if player.is_automated() == True and not self.game.tictactoe_game_over:                
             move = player.get_move()
             self.place_token(move)
             result = self.check_for_winner()
@@ -248,19 +238,19 @@ class Tictactoe(State):
                     label = myfont.render("Player 1 wins", 1, WHITE)
                     self.game.screen.blit(label, (self.game.screen_width//2 - BOARD_SIDE + 30, 40))
                     #self.computer_win += 1
-                    self.game.game_over = True
+                    self.game.tictactoe_game_over = True
                 else:
                     label = myfont.render("Player 2 wins", 1, WHITE)
                     self.game.screen.blit(label, (self.game.screen_width//2 - BOARD_SIDE + 30, 40))
                     #self.player_win += 1
-                    self.game.game_over = True
+                    self.game.tictactoe_game_over = True
                     
             #Check for draw
             elif result == True: 
                 label = myfont.render("Draw!!", 1, WHITE)
                 self.game.screen.blit(label, (self.game.screen_width//2 - BOARD_SIDE + 30, 40))
                 #self.draw += 1
-                self.game.game_over = True  
+                self.game.tictactoe_game_over = True  
                       
             self.draw_board(self.get_grid())
 
