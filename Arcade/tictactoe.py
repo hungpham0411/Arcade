@@ -209,19 +209,16 @@ class Tictactoe(State):
                         if result == PLAYER1:
                             label = myfont.render("Player 1 wins", 1, WHITE)
                             self.game.screen.blit(label, (self.game.screen_width//2 - BOARD_SIDE + 30, 40))
-                            #self.player_win += 1
                             self.game.tictactoe_game_over = True
                         else:
                             label = myfont.render("Player 2 wins", 1, WHITE)
                             self.game.screen.blit(label, (self.game.screen_width//2 - BOARD_SIDE + 30, 40))
-                            #self.player_win += 1
                             self.game.tictactoe_game_over = True
                             
                     #Check for draw
                     elif result == True:
                         label = myfont.render("Draw!!", 1, WHITE)
                         self.game.screen.blit(label, (self.game.screen_width//2 - BOARD_SIDE + 30, 40))
-                        #self.draw += 1
                         self.game.tictactoe_game_over = True
                             
                     self.draw_board(self.get_grid())
@@ -237,19 +234,16 @@ class Tictactoe(State):
                 if result == PLAYER1:
                     label = myfont.render("Player 1 wins", 1, WHITE)
                     self.game.screen.blit(label, (self.game.screen_width//2 - BOARD_SIDE + 30, 40))
-                    #self.computer_win += 1
                     self.game.tictactoe_game_over = True
                 else:
                     label = myfont.render("Player 2 wins", 1, WHITE)
                     self.game.screen.blit(label, (self.game.screen_width//2 - BOARD_SIDE + 30, 40))
-                    #self.player_win += 1
                     self.game.tictactoe_game_over = True
                     
             #Check for draw
             elif result == True: 
                 label = myfont.render("Draw!!", 1, WHITE)
                 self.game.screen.blit(label, (self.game.screen_width//2 - BOARD_SIDE + 30, 40))
-                #self.draw += 1
                 self.game.tictactoe_game_over = True  
                       
             self.draw_board(self.get_grid())

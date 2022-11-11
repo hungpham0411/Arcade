@@ -5,6 +5,7 @@ import sys
 from state import State
 from tictactoe_difficulty_screen import Tictactoe_Difficulty_Screen
 from pong_difficulty_screen import Pong_Difficulty_Screen
+from battleship_difficulty_screen import Battleship_Difficulty_Screen
 
 LIGHT_BLUE = (26, 26, 179)
 NEON = (1, 255, 244)
@@ -60,7 +61,11 @@ class Gamehub(State):
         
         # Choose Battleship
         if battleship_button.interact_button(self.game.screen) == True:
-            pass
+            self.game.screen.fill((0,0,0))
+            new_state = Battleship_Difficulty_Screen(self.game) # Create the Pong_Difficulty_Screen state
+            new_state.enter_state()
+            pygame.display.update()
+            pygame.time.wait(300)
         
         # Back button to return to the game menu screen
         if back_button.interact_button(self.game.screen) == True:

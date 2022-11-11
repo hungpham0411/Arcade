@@ -2,6 +2,7 @@ import pygame
 from game_menu import GameMenu
 import tictactoe
 import pong
+import battleship
 
 FPS = 60
 
@@ -28,10 +29,15 @@ class Game():
         self.pong_game_over = False
         self.pong_mode = None
         
+        # Battleship
+        self.battleship_game_over = False
+        self.battleship_mode = None
+        
     # The main game loop
     def game_loop(self):
         while self.playing:
-            # If the game is over, restart the game
+            self.clock.tick(FPS)    # Set the maximum frames per second for all windows
+            # If the Tictactoe game is over, restart the game
             if self.tictactoe_game_over == True:
                 pygame.time.delay(2000)
                 self.state_stack.pop()
@@ -39,16 +45,24 @@ class Game():
                 new_state.enter_state()
                 self.tictactoe_game_over = False
                 
+            # If the Pong game is over, restart the game
             if self.pong_game_over == True:
                 pygame.time.delay(2000)
                 self.state_stack.pop()
                 new_state = pong.Pong(self, self.pong_mode)
                 new_state.enter_state()
                 self.pong_game_over = False
+            
+            # If the Battleship game is over, restart the game
+            if self.battleship_game_over == True:
+                pygame.time.delay(2000)
+                self.state_stack.pop()
+                new_state = battleship.Battleship(self, self.battleship_mode)
+                new_state.enter_state()
+                self.battleship_game_over = False
                 
             self.render()    
             self.get_events()    
-            self.clock.tick(FPS)    # Set the maximum frames per second for all windows
         pygame.quit()
                 
     def render(self):
