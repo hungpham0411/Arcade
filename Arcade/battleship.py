@@ -245,12 +245,22 @@ class Battleship(State):
                     move_board_right_vertical_border = self.game.screen_width//2 + BOARD_WIDTH//2 - 50
                     move_board_top_horizontal_border = self.game.screen_height//2 - BOARD_HEIGHT//2 + 100
                     move_board_bottom_horizontal_border = self.game.screen_height//2 + BOARD_HEIGHT//2 - 100
+                    
                     # Make sure the player's move is on the grid (move board for player)
                     if move_board_left_vertical_border < x < move_board_right_vertical_border and move_board_top_horizontal_border < y < move_board_bottom_horizontal_border:
                         row = y // SQUARE_SIZE - 4
                         col = x // SQUARE_SIZE - 17
                         index = row * 10 + col
                         self.make_move(index)
+                    
+                    # Game over message when the game is over
+                    if self.over:
+                        myfont = self.get_font(30)
+                        text = "Player " + str(self.result) + " wins!!!"
+                        textbox = myfont.render(text, 1, WHITE)
+                        self.game.screen.blit(textbox, (self.game.screen_width//2 - textbox.get_width()//2, 40))
+                        pygame.display.update()
+                        self.game.battleship_game_over = True
                         
             self.draw_board()
             
