@@ -73,6 +73,7 @@ class Pong(State):
         
         # Score board
         score_font = self.get_font(20)
+        win_font = self.get_font(30)
         player_score_text = score_font.render("Player", 1, WHITE)
         computer_score_text = score_font.render("Computer", 1, WHITE)
         
@@ -87,13 +88,13 @@ class Pong(State):
         
         # The computer wins the series if wins 10 games
         if self.computer_win == 10: 
-            computer_win_text = score_font.render("Computer wins", 1, WHITE)
+            computer_win_text = win_font.render("Computer wins!!!", 1, WHITE)
             self.game.screen.blit(computer_win_text, (self.game.screen_width//2 - computer_win_text.get_width()//2, 40))
             self.game.pong_game_over = True
             
         # The human player wins the series if wins 10 games
         if self.player_win == 10: 
-            player_win_text = score_font.render("Player wins", 1, WHITE)
+            player_win_text = win_font.render("Player wins!!!", 1, WHITE)
             self.game.screen.blit(player_win_text, (self.game.screen_width//2 - player_win_text.get_width()//2, 40))
             self.game.pong_game_over = True
             
@@ -127,13 +128,13 @@ class Pong(State):
         # Human player moves
         pressed = pygame.key.get_pressed()
         if pressed[pygame.K_w]:         # Move up with 'w'
-            self.left_paddle_y -= 5
+            self.left_paddle_y -= 4.75
         elif pressed[pygame.K_s]:       # Move down with 's'
-            self.left_paddle_y += 5
+            self.left_paddle_y += 4.75
         if pressed[pygame.K_UP]:        # Move up with UP arrow
-            self.left_paddle_y -= 5
+            self.left_paddle_y -= 4.75
         elif pressed[pygame.K_DOWN]:    # Move down with DOWN arrow
-            self.left_paddle_y += 5
+            self.left_paddle_y += 4.75
             
         # Left paddle hits the top
         if self.left_paddle_y < self.game.screen_height//2 - BOARD_HEIGHT//2 + 5:
@@ -143,28 +144,37 @@ class Pong(State):
         if self.left_paddle_y > self.game.screen_height//2 + BOARD_HEIGHT//2 - PADDLE_HEIGHT:
             self.left_paddle_y = self.game.screen_height//2 + BOARD_HEIGHT//2 - PADDLE_HEIGHT
         
-        # The AI moves
-        # Normal Mode
+        # AI Normal Mode
         if self.mode == 'normal':
             right_paddle_center = self.right_paddle_y + PADDLE_HEIGHT//2
-            if (right_paddle_center + 20 < self.ball_y) and (self.right_paddle_y < self.game.screen_height//2 + BOARD_HEIGHT//2 - PADDLE_HEIGHT): # AI move up
+            # Check if the y position of the AI paddle's center is lower than the ball's y position  
+            if (right_paddle_center + 20 < self.ball_y) and (self.right_paddle_y < self.game.screen_height//2 + BOARD_HEIGHT//2 - PADDLE_HEIGHT): 
+                # If it is lower, move the paddle down
                 self.right_paddle_y += 4.75
-            if (right_paddle_center - 20 > self.ball_y + BALL_SIZE) and (self.right_paddle_y > self.game.screen_height//2 - BOARD_HEIGHT//2 + 5): # AI move down
+                
+            # Check if the y position of the AI paddle's center is higher than the ball's y position 
+            if (right_paddle_center - 20 > self.ball_y + BALL_SIZE) and (self.right_paddle_y > self.game.screen_height//2 - BOARD_HEIGHT//2 + 5): 
+                # If it is higher, move the paddle up
                 self.right_paddle_y -= 4.75
                 
-        # Hard mode
+        # AI Hard mode
         elif self.mode == 'hard':
             right_paddle_center = self.right_paddle_y + PADDLE_HEIGHT//2
-            if (right_paddle_center + 10 < self.ball_y) and (self.right_paddle_y < self.game.screen_height//2 + BOARD_HEIGHT//2 - PADDLE_HEIGHT): # AI move up
-                self.right_paddle_y += 4.75
-            if (right_paddle_center - 10 > self.ball_y + BALL_SIZE) and (self.right_paddle_y > self.game.screen_height//2 - BOARD_HEIGHT//2 + 5): # AI move down
+            # Check if the y position of the AI paddle's center is lower than the ball's y position  
+            if (right_paddle_center + 10 < self.ball_y) and (self.right_paddle_y < self.game.screen_height//2 + BOARD_HEIGHT//2 - PADDLE_HEIGHT): 
+                # If it is lower, move the paddle down
+                self.right_paddle_y += 4.75     
+                
+            # Check if the y position of the AI paddle's center is higher than the ball's y position  
+            if (right_paddle_center - 10 > self.ball_y + BALL_SIZE) and (self.right_paddle_y > self.game.screen_height//2 - BOARD_HEIGHT//2 + 5): 
+                # If it is higher, move the paddle up
                 self.right_paddle_y -= 4.75
         
-        # Ball has hit the top
+        # Ball has hit the top of the board
         if self.ball_y < self.game.screen_height//2 - BOARD_HEIGHT//2 + BALL_SIZE + 5: 
             self.ball_y_momentum = BALL_MOMENTUM
             
-        # Ball has hit the bottom
+        # Ball has hit the bottom of the board
         if self.ball_y > self.game.screen_height//2 + BOARD_HEIGHT//2 - BALL_SIZE: 
             self.ball_y_momentum = -BALL_MOMENTUM
         
@@ -175,7 +185,7 @@ class Pong(State):
             self.ball_x = self.game.screen_width//2 + 5
             self.ball_y = self.game.screen_height//2
             self.ball_x_momentum = BALL_MOMENTUM - 1
-            self.ball_y_momentum = BALL_MOMENTUM - 2
+            self.ball_y_momentum = BALL_MOMENTUM - 3
             
         # AI loses if the ball gets through the AI to the right edge
         if self.ball_x >= self.game.screen_width//2 + BOARD_WIDTH//2 - BALL_SIZE: 
@@ -184,17 +194,20 @@ class Pong(State):
             self.ball_x = self.game.screen_width//2 + 5
             self.ball_y = self.game.screen_height//2
             self.ball_x_momentum = -(BALL_MOMENTUM - 1)
-            self.ball_y_momentum = BALL_MOMENTUM - 2
+            self.ball_y_momentum = BALL_MOMENTUM - 3
         
         # Handle collisions between the ball and the paddles
         # The ball collides with the left paddle (human player)
         if (self.ball_x <= self.game.screen_width//2 - BOARD_WIDTH//2 + PADDLE_INSET + PADDLE_WIDTH + 5) and (self.ball_x > self.game.screen_width//2 - BOARD_WIDTH//2 + PADDLE_INSET):
             if self.ball_y >= self.left_paddle_y and self.ball_y <= self.left_paddle_y + PADDLE_HEIGHT:
+                # Check if the ball collides to the top side of the left paddle
                 if self.ball_y >= self.left_paddle_y - 5 and self.ball_y <= self.left_paddle_y + PADDLE_HEIGHT//3:
                     self.ball_x_momentum = BALL_MOMENTUM 
                     self.ball_y_momentum = -BALL_MOMENTUM 
+                # Check if the ball collides to the center of the left paddle
                 elif self.ball_y >= self.left_paddle_y + PADDLE_HEIGHT//3 and self.ball_y <= self.left_paddle_y + 2 * PADDLE_HEIGHT//3:
                     self.ball_x_momentum = BALL_MOMENTUM 
+                # Check if the ball collides to the bottom side of the left paddle
                 elif self.ball_y >= self.left_paddle_y + 2 * PADDLE_HEIGHT//3 and self.ball_y <= self.left_paddle_y + PADDLE_HEIGHT + 5:
                     self.ball_x_momentum = BALL_MOMENTUM 
                     self.ball_y_momentum = BALL_MOMENTUM
@@ -202,11 +215,14 @@ class Pong(State):
         # The ball collides with the right paddle (AI player)
         if (self.ball_x >= self.game.screen_width//2 + BOARD_WIDTH//2 - PADDLE_INSET - PADDLE_WIDTH + 5) and (self.ball_x < self.game.screen_width//2 + BOARD_WIDTH//2 - PADDLE_INSET):
             if self.ball_y >= self.right_paddle_y and self.ball_y <= self.right_paddle_y + PADDLE_HEIGHT:
+                # Check if the ball collides to the top side of the right paddle
                 if self.ball_y >= self.right_paddle_y - 5 and self.ball_y <= self.right_paddle_y + PADDLE_HEIGHT//3:
                     self.ball_x_momentum = -BALL_MOMENTUM 
                     self.ball_y_momentum = -BALL_MOMENTUM 
+                # Check if the ball collides to the center of the right paddle
                 elif self.ball_y >= self.right_paddle_y + PADDLE_HEIGHT//3 and self.ball_y <= self.right_paddle_y + 2 * PADDLE_HEIGHT//3:
                     self.ball_x_momentum = -BALL_MOMENTUM 
+                # Check if the ball collides to the bottom side of the right paddle
                 elif self.ball_y >= self.right_paddle_y + 2 * PADDLE_HEIGHT//3 and self.ball_y <= self.right_paddle_y + PADDLE_HEIGHT + 5:
                     self.ball_x_momentum = -BALL_MOMENTUM 
                     self.ball_y_momentum = BALL_MOMENTUM
