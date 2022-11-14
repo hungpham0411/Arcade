@@ -39,7 +39,7 @@ class Game():
             self.clock.tick(FPS)    # Set the maximum frames per second for all windows
             # If the Tictactoe game is over, restart the game
             if self.tictactoe_game_over == True:
-                pygame.time.delay(2000)
+                pygame.time.delay(3000)
                 self.state_stack.pop()
                 new_state = tictactoe.Tictactoe(self, 'X', self.tictactoe_max_depth_AI)
                 new_state.enter_state()
@@ -47,7 +47,7 @@ class Game():
                 
             # If the Pong game is over, restart the game
             if self.pong_game_over == True:
-                pygame.time.delay(2000)
+                pygame.time.delay(3000)
                 self.state_stack.pop()
                 new_state = pong.Pong(self, self.pong_mode)
                 new_state.enter_state()
@@ -55,7 +55,7 @@ class Game():
             
             # If the Battleship game is over, restart the game
             if self.battleship_game_over == True:
-                pygame.time.delay(2000)
+                pygame.time.delay(3000)
                 self.state_stack.pop()
                 new_state = battleship.Battleship(self, self.battleship_mode)
                 new_state.enter_state()

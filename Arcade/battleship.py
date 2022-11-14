@@ -278,6 +278,8 @@ class Battleship(State):
             
             # Game over message when the game is over
             if self.over:
+                self.draw_ships(self.player2, left = (self.game.screen_width//2 + BOARD_WIDTH//2 - SQUARE_SIZE * 10 - 50), top = (self.game.screen_height//2 - BOARD_HEIGHT//2 + 100))
+                self.draw_markers(self.player1, left = (self.game.screen_width//2 + BOARD_WIDTH//2 - SQUARE_SIZE * 10 - 50), top = (self.game.screen_height//2 - BOARD_HEIGHT//2 + 100))
                 myfont = self.get_font(30)
                 text = "Player " + str(self.result) + " wins!!!"
                 textbox = myfont.render(text, 1, WHITE)
