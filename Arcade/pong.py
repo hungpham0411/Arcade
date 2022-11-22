@@ -38,8 +38,8 @@ class Pong(State):
         self.player_win = 0    
         self.computer_win = 0  
 
-    # Draw the Pong board on the game window
-    def draw_board(self):    
+    # Draw the Pong grid
+    def draw_grid(self):
         # Pong visual board
         visual_board = pygame.Rect(self.game.screen_width//2 - BOARD_WIDTH//2, self.game.screen_height//2 - BOARD_HEIGHT//2, BOARD_WIDTH, BOARD_HEIGHT)
         pygame.draw.rect(self.game.screen, BLACK, visual_board)
@@ -56,24 +56,24 @@ class Pong(State):
         horizontal_line_up = pygame.Rect(self.game.screen_width//2 - BOARD_WIDTH//2, self.game.screen_height//2 - BOARD_HEIGHT//2, BOARD_WIDTH, 6)
         horizontal_line_down = pygame.Rect(self.game.screen_width//2 - BOARD_WIDTH//2, self.game.screen_height//2 + BOARD_HEIGHT//2, BOARD_WIDTH + 10, 6)
         
+        # Paddles
+        paddle_left = pygame.Rect(self.game.screen_width//2 - BOARD_WIDTH//2 + 50, self.left_paddle_y, PADDLE_WIDTH, PADDLE_HEIGHT)
+        paddle_right = pygame.Rect(self.game.screen_width//2 + BOARD_WIDTH//2 - 50, self.right_paddle_y, PADDLE_WIDTH, PADDLE_HEIGHT)
+        
         pygame.draw.rect(self.game.screen, WHITE, vertical_line_left)
         pygame.draw.rect(self.game.screen, WHITE, vertical_line_right)
         pygame.draw.rect(self.game.screen, WHITE, horizontal_line_up)
         pygame.draw.rect(self.game.screen, WHITE, horizontal_line_down)
-        
-        # Paddles
-        paddle_left = pygame.Rect(self.game.screen_width//2 - BOARD_WIDTH//2 + 50, self.left_paddle_y, PADDLE_WIDTH, PADDLE_HEIGHT)
-        paddle_right = pygame.Rect(self.game.screen_width//2 + BOARD_WIDTH//2 - 50, self.right_paddle_y, PADDLE_WIDTH, PADDLE_HEIGHT)
         
         pygame.draw.rect(self.game.screen, WHITE, paddle_left)
         pygame.draw.rect(self.game.screen, WHITE, paddle_right)
         
         # Ball
         pygame.draw.circle(self.game.screen, WHITE, (self.ball_x, self.ball_y), BALL_SIZE)
-        
-        # Score board
+    
+    # Draw the score board
+    def draw_score_board(self):
         score_font = self.get_font(20)
-        win_font = self.get_font(30)
         player_score_text = score_font.render("Player", 1, WHITE)
         computer_score_text = score_font.render("Computer", 1, WHITE)
         
@@ -86,6 +86,12 @@ class Pong(State):
         self.game.screen.blit(player_score, (self.game.screen_width//4 - player_score.get_width()//2, 60))
         self.game.screen.blit(computer_score, (3 * self.game.screen_width//4 - computer_score.get_width()//2, 60))
         
+    # Draw the Pong board on the game window
+    def draw_board(self):    
+        self.draw_grid()
+        self.draw_score_board()
+        
+        win_font = self.get_font(25)
         # The computer wins the series if wins 10 games
         if self.computer_win == 10: 
             computer_win_text = win_font.render("Computer wins!!!", 1, WHITE)

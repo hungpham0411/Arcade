@@ -47,6 +47,7 @@ class Tictactoe(State):
                 
         self.initialize()
 
+    # Initialize the grid
     def initialize(self):
         self.grid = [[None, None, None], [None, None, None], [None, None, None]]
         self.turn = 'X'
@@ -89,9 +90,7 @@ class Tictactoe(State):
     def get_turn(self):
         return self.turn
 
-    def get_grid(self):
-        return self.grid
-    
+    # Place the move
     def place_token(self, move):
         self.set_position(move, self.get_turn())
         self.next_player()
@@ -101,45 +100,53 @@ class Tictactoe(State):
             return self.players[0]
         return self.players[1]
     
-    # Draw the tic-tac-toe board on the game window
-    def draw_board(self, board):
-        # Tic-tac-toe logic board
-        logic_board = np.transpose(board)
-        
+    def get_grid(self):
+        return self.grid
+    
+    # Draw the tic-tac-toe grid
+    def draw_grid(self):
         # Tic-tac-toe visual board
         visual_board = pygame.Rect(self.game.screen_width//2 - BOARD_SIDE/2, self.game.screen_height//2 - BOARD_SIDE/2, BOARD_SIDE, BOARD_SIDE)
         pygame.draw.rect(self.game.screen, BLACK, visual_board)
         
         # Vertical border
-        vertical_line_left = pygame.Rect(self.game.screen_width//2 - BOARD_SIDE/2, self.game.screen_height//2 - BOARD_SIDE/2, 6, BOARD_SIDE)
-        vertical_line_right = pygame.Rect(self.game.screen_width//2 + BOARD_SIDE/2, self.game.screen_height//2 - BOARD_SIDE/2, 6, BOARD_SIDE)
+        vertical_border_left = pygame.Rect(self.game.screen_width//2 - BOARD_SIDE/2, self.game.screen_height//2 - BOARD_SIDE/2, 6, BOARD_SIDE)
+        vertical_border_right = pygame.Rect(self.game.screen_width//2 + BOARD_SIDE/2, self.game.screen_height//2 - BOARD_SIDE/2, 6, BOARD_SIDE)
         
         # Horizontal border
-        horizontal_line_up = pygame.Rect(self.game.screen_width//2 - BOARD_SIDE/2, self.game.screen_height//2 - BOARD_SIDE/2, BOARD_SIDE, 6)
-        horizontal_line_down = pygame.Rect(self.game.screen_width//2 - BOARD_SIDE/2, self.game.screen_height//2 + BOARD_SIDE/2, BOARD_SIDE + 10, 6)
+        horizontal_border_top = pygame.Rect(self.game.screen_width//2 - BOARD_SIDE/2, self.game.screen_height//2 - BOARD_SIDE/2, BOARD_SIDE, 6)
+        horizontal_border_bottom = pygame.Rect(self.game.screen_width//2 - BOARD_SIDE/2, self.game.screen_height//2 + BOARD_SIDE/2, BOARD_SIDE + 10, 6)
 
-        pygame.draw.rect(self.game.screen, WHITE, vertical_line_left)
-        pygame.draw.rect(self.game.screen, WHITE, vertical_line_right)
-        pygame.draw.rect(self.game.screen, WHITE, horizontal_line_up)
-        pygame.draw.rect(self.game.screen, WHITE, horizontal_line_down)
+        pygame.draw.rect(self.game.screen, WHITE, vertical_border_left)
+        pygame.draw.rect(self.game.screen, WHITE, vertical_border_right)
+        pygame.draw.rect(self.game.screen, WHITE, horizontal_border_top)
+        pygame.draw.rect(self.game.screen, WHITE, horizontal_border_bottom)
         
         # Lines inside the board
         for i in range(1,3):
+            # horizontal lines
             pygame.draw.line(self.game.screen, WHITE, (self.game.screen_width//2 - BOARD_SIDE/2, self.game.screen_height//2 - BOARD_SIDE/2 + i * BOARD_SIDE/3), 
                              (self.game.screen_width//2 + BOARD_SIDE/2, self.game.screen_height//2 - BOARD_SIDE/2 + i * BOARD_SIDE/3), 6) 
+            # vertical lines
             pygame.draw.line(self.game.screen, WHITE, (self.game.screen_width//2 - BOARD_SIDE/2 + i * BOARD_SIDE/3, self.game.screen_height//2 - BOARD_SIDE/2), 
                              (self.game.screen_width//2 - BOARD_SIDE/2 + i * BOARD_SIDE/3, self.game.screen_height//2 + BOARD_SIDE/2), 6)
-        
-        # Markers for 'X' and 'O'
+    
+    # Draw the markers for 'X' and 'O'
+    def draw_markers(self):
         for row in range(3):
             for column in range(3):
-                if logic_board[row][column] == PLAYER1:     # For 'X'
-                    pygame.draw.line(self.game.screen, WHITE, (self.game.screen_width//2 - BOARD_SIDE/2 + row * BOARD_SIDE/3 + 35, self.game.screen_height//2 - BOARD_SIDE/2 + column * BOARD_SIDE/3 + 35), 
-                                     (self.game.screen_width//2 - BOARD_SIDE/2 + row * BOARD_SIDE/3 + 115, self.game.screen_height//2 - BOARD_SIDE/2 + column * BOARD_SIDE/3 + 115), 15)
-                    pygame.draw.line(self.game.screen, WHITE, (self.game.screen_width//2 - BOARD_SIDE/2 + row * BOARD_SIDE/3 + 115, self.game.screen_height//2 - BOARD_SIDE/2 + column * BOARD_SIDE/3 + 35), 
-                                     (self.game.screen_width//2 - BOARD_SIDE/2 + row * BOARD_SIDE/3 + 35, self.game.screen_height//2 - BOARD_SIDE/2 + column * BOARD_SIDE/3 + 115), 15)
-                elif logic_board[row][column] == PLAYER2:   # For 'O'
-                    pygame.draw.circle(self.game.screen, WHITE, (self.game.screen_width//2 - BOARD_SIDE/2 + row * BOARD_SIDE/3 + 80, self.game.screen_height//2 - BOARD_SIDE/2 + column * BOARD_SIDE/3 + 75), 50, 15)
+                if self.grid[row][column] == PLAYER1:     # For 'X'
+                    pygame.draw.line(self.game.screen, WHITE, (self.game.screen_width//2 - BOARD_SIDE/2 + column * BOARD_SIDE/3 + 35, self.game.screen_height//2 - BOARD_SIDE/2 + row * BOARD_SIDE/3 + 35), 
+                                     (self.game.screen_width//2 - BOARD_SIDE/2 + column * BOARD_SIDE/3 + 115, self.game.screen_height//2 - BOARD_SIDE/2 + row * BOARD_SIDE/3 + 115), 15)
+                    pygame.draw.line(self.game.screen, WHITE, (self.game.screen_width//2 - BOARD_SIDE/2 + column * BOARD_SIDE/3 + 115, self.game.screen_height//2 - BOARD_SIDE/2 + row * BOARD_SIDE/3 + 35), 
+                                     (self.game.screen_width//2 - BOARD_SIDE/2 + column * BOARD_SIDE/3 + 35, self.game.screen_height//2 - BOARD_SIDE/2 + row * BOARD_SIDE/3 + 115), 15)
+                elif self.grid[row][column] == PLAYER2:   # For 'O'
+                    pygame.draw.circle(self.game.screen, WHITE, (self.game.screen_width//2 - BOARD_SIDE/2 + column * BOARD_SIDE/3 + 80, self.game.screen_height//2 - BOARD_SIDE/2 + row * BOARD_SIDE/3 + 75), 50, 15)
+                    
+    # Draw the tic-tac-toe board on the game window
+    def draw_board(self):
+        self.draw_grid()
+        self.draw_markers()
         
         pygame.display.update()
         
@@ -172,11 +179,11 @@ class Tictactoe(State):
             self.exit_state()   # Exit the current state which will move to the previous state
             pygame.time.wait(300)
         
-        self.draw_board(self.get_grid())
+        self.draw_board()
     
     def get_events(self):
         myfont = self.get_font(30)
-        self.draw_board(self.get_grid())
+        self.draw_board()
         self.game.tictactoe_game_over = False
         player_char = self.get_turn()
         player = self.get_player(player_char)
@@ -187,7 +194,7 @@ class Tictactoe(State):
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 #Check if the player playing is the human player
-                if player.is_automated() == False:
+                if player.is_automated() == False and not self.game.tictactoe_game_over:
                     # Position of the human's move
                     pos = pygame.mouse.get_pos()
                     cell_x = pos[0] // 150 - 3 # The column of the move
@@ -207,11 +214,11 @@ class Tictactoe(State):
                     #Check if the human player win
                     if result == player_char:
                         if result == PLAYER1:
-                            label = myfont.render("Player 1 wins!!!", 1, WHITE)
+                            label = myfont.render("Player wins!!!", 1, WHITE)
                             self.game.screen.blit(label, (self.game.screen_width//2 - BOARD_SIDE + 30, 40))
                             self.game.tictactoe_game_over = True
                         else:
-                            label = myfont.render("Player 2 wins!!!", 1, WHITE)
+                            label = myfont.render("Computer wins!!!", 1, WHITE)
                             self.game.screen.blit(label, (self.game.screen_width//2 - BOARD_SIDE + 30, 40))
                             self.game.tictactoe_game_over = True
                             
@@ -221,7 +228,7 @@ class Tictactoe(State):
                         self.game.screen.blit(label, (self.game.screen_width//2 - BOARD_SIDE + 30, 40))
                         self.game.tictactoe_game_over = True
                             
-                    self.draw_board(self.get_grid())
+                    self.draw_board()
                     
         #Check if the player playing is the AI
         if player.is_automated() == True and not self.game.tictactoe_game_over:                
@@ -232,11 +239,11 @@ class Tictactoe(State):
             #Check if the AI player win
             if result == player_char:
                 if result == PLAYER1:
-                    label = myfont.render("Player 1 wins!!!", 1, WHITE)
+                    label = myfont.render("Player wins!!!", 1, WHITE)
                     self.game.screen.blit(label, (self.game.screen_width//2 - BOARD_SIDE + 30, 40))
                     self.game.tictactoe_game_over = True
                 else:
-                    label = myfont.render("Player 2 wins!!!", 1, WHITE)
+                    label = myfont.render("Computer wins!!!", 1, WHITE)
                     self.game.screen.blit(label, (self.game.screen_width//2 - BOARD_SIDE + 30, 40))
                     self.game.tictactoe_game_over = True
                     
@@ -246,7 +253,7 @@ class Tictactoe(State):
                 self.game.screen.blit(label, (self.game.screen_width//2 - BOARD_SIDE + 30, 40))
                 self.game.tictactoe_game_over = True  
                       
-            self.draw_board(self.get_grid())
+            self.draw_board()
 
     def load_assets(self):
         self.tictactoe_background = pygame.image.load(os.path.join('Assets', 'cyberpunk_background.jpg'))

@@ -4,7 +4,7 @@ import os
 import sys
 import random
 from state import State
-from battleshipplayer import Player
+from battleship_players import Player
 
 SQUARE_SIZE = 40                
 HORIZONTAL_MARGIN = SQUARE_SIZE * 4      
@@ -35,7 +35,7 @@ class Battleship(State):
         self.human2 = False
         self.player1 = Player()
         self.player2 = Player()
-        self.player1_turn = True
+        self.player_turn = True
         self.computer_turn = True if not self.human1 else False
         self.over = False
         self.result = None
@@ -43,8 +43,8 @@ class Battleship(State):
         self.load_assets()
     
     def make_move(self, i):
-        player = self.player1 if self.player1_turn else self.player2
-        opponent = self.player2 if self.player1_turn else self.player1
+        player = self.player1 if self.player_turn else self.player2
+        opponent = self.player2 if self.player_turn else self.player1
         
         if player.search[i] != "U":
             return
@@ -74,12 +74,12 @@ class Battleship(State):
             if player.search[i] == "U":
                 game_over = False
         self.over = game_over
-        self.result = 1 if self.player1_turn else 2
+        self.result = "Player" if self.player_turn else "Computer"
                 
         #change active team
         #if not hit:        # If you want to play alternative turns, leave this comment
                             # if not (if you hit you can continue), uncomment this 
-        self.player1_turn = not self.player1_turn
+        self.player_turn = not self.player_turn
         
         #switch between human and computer turns
         if (self.human1 and not self.human2) or (not self.human1 and self.human2):
@@ -87,7 +87,7 @@ class Battleship(State):
     
     # Make normal AI move
     def normal_ai(self):
-        search = self.player1.search if self.player1_turn else self.player2.search
+        search = self.player1.search if self.player_turn else self.player2.search
         # List of unknown, "U" squares 
         unknown_squares = [i for i, square in enumerate(search) if square == "U"]
         # List of hit, "H" squares
@@ -108,7 +108,7 @@ class Battleship(State):
             
     # Make hard AI move
     def hard_ai(self):
-        search = self.player1.search if self.player1_turn else self.player2.search
+        search = self.player1.search if self.player_turn else self.player2.search
         # List of unknown, "U" squares 
         unknown_squares = [i for i, square in enumerate(search) if square == "U"]
         # List of hit, "H" squares
@@ -139,7 +139,7 @@ class Battleship(State):
             self.make_random_move()
             
     def make_random_move(self):
-        search = self.player1.search if self.player1_turn else self.player2.search
+        search = self.player1.search if self.player_turn else self.player2.search
         # List of unknown, "U" squares 
         unknown_squares = [i for i, square in enumerate(search) if square == "U"]
         if len(unknown_squares) > 0:
@@ -181,6 +181,15 @@ class Battleship(State):
                 height = ship.size * SQUARE_SIZE - 2 * INDENT
             rectangle = pygame.Rect(x, y, width, height)
             pygame.draw.rect(self.game.screen, GREEN, rectangle, border_radius = 15)
+    
+    # Draw the Player and Computer Text
+    def draw_players_text(self):
+        score_font = self.get_font(20)
+        player_score_text = score_font.render("Player", 1, WHITE)
+        computer_score_text = score_font.render("Computer", 1, WHITE)
+        
+        self.game.screen.blit(player_score_text, (self.game.screen_width//4 - player_score_text.get_width()//2 + 60, 100))
+        self.game.screen.blit(computer_score_text, (3 * self.game.screen_width//4 - computer_score_text.get_width()//2 - 70, 100))
         
     # Draw the Battleship board on the game window
     def draw_board(self):
@@ -196,13 +205,7 @@ class Battleship(State):
         self.draw_grid(left = (self.game.screen_width//2 + BOARD_WIDTH//2 - SQUARE_SIZE * 10 - 50), top = (self.game.screen_height//2 - BOARD_HEIGHT//2 + 100))
         self.draw_markers(self.player1, left = (self.game.screen_width//2 + BOARD_WIDTH//2 - SQUARE_SIZE * 10 - 50), top = (self.game.screen_height//2 - BOARD_HEIGHT//2 + 100))
         
-        # Player and Computer Text
-        score_font = self.get_font(20)
-        player_score_text = score_font.render("Player", 1, WHITE)
-        computer_score_text = score_font.render("Computer", 1, WHITE)
-        
-        self.game.screen.blit(player_score_text, (self.game.screen_width//4 - player_score_text.get_width()//2 + 60, 100))
-        self.game.screen.blit(computer_score_text, (3 * self.game.screen_width//4 - computer_score_text.get_width()//2 - 70, 100))
+        self.draw_players_text()
         
         pygame.display.update()
         
@@ -222,9 +225,6 @@ class Battleship(State):
             pygame.time.wait(300)
             
         #if rules_button.interact_button(self.game.screen) == True:
-            #new_state = Battleship(self.game, 'normal') # Create the Battleship state with normal AI
-            #new_state.enter_state()
-            #pygame.time.wait(300)
             
         self.draw_board()
             
@@ -240,7 +240,7 @@ class Battleship(State):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Player moves
                 x, y = pygame.mouse.get_pos()
-                if not self.game.battleship_game_over and self.player1_turn:
+                if not self.game.battleship_game_over and self.player_turn:
                     move_board_left_vertical_border = self.game.screen_width//2 + BOARD_WIDTH//2 - SQUARE_SIZE * 10 - 50
                     move_board_right_vertical_border = self.game.screen_width//2 + BOARD_WIDTH//2 - 50
                     move_board_top_horizontal_border = self.game.screen_height//2 - BOARD_HEIGHT//2 + 100
@@ -253,40 +253,42 @@ class Battleship(State):
                         index = row * 10 + col
                         self.make_move(index)
                     
+                    self.draw_board()  
+                    
                     # Game over message when the game is over
                     if self.over:
-                        myfont = self.get_font(30)
-                        text = "Player " + str(self.result) + " wins!!!"
+                        self.draw_ships(self.player2, left = (self.game.screen_width//2 + BOARD_WIDTH//2 - SQUARE_SIZE * 10 - 50), top = (self.game.screen_height//2 - BOARD_HEIGHT//2 + 100))
+                        self.draw_markers(self.player1, left = (self.game.screen_width//2 + BOARD_WIDTH//2 - SQUARE_SIZE * 10 - 50), top = (self.game.screen_height//2 - BOARD_HEIGHT//2 + 100))
+                        myfont = self.get_font(25)
+                        text = self.result + " wins!!!"
                         textbox = myfont.render(text, 1, WHITE)
                         self.game.screen.blit(textbox, (self.game.screen_width//2 - textbox.get_width()//2, 40))
                         pygame.display.update()
-                        self.game.battleship_game_over = True
+                        self.game.battleship_game_over = True 
                         
+        # Computer moves
+        if not self.game.battleship_game_over and self.computer_turn:
+            # Moves for normal AI
+            if self.mode == "normal":
+                self.normal_ai()
+            # Moves for hard AI
+            elif self.mode == "hard":
+                self.hard_ai()
+            pygame.time.wait(300)
+                
             self.draw_board()
-            
-            # Computer moves
-            if not self.game.battleship_game_over and self.computer_turn:
-                # Moves for normal AI
-                if self.mode == "normal":
-                    self.normal_ai()
-                # Moves for hard AI
-                elif self.mode == "hard":
-                    self.hard_ai()
-                pygame.time.wait(300)
-                    
-            self.draw_board()
-            
+                
             # Game over message when the game is over
             if self.over:
                 self.draw_ships(self.player2, left = (self.game.screen_width//2 + BOARD_WIDTH//2 - SQUARE_SIZE * 10 - 50), top = (self.game.screen_height//2 - BOARD_HEIGHT//2 + 100))
                 self.draw_markers(self.player1, left = (self.game.screen_width//2 + BOARD_WIDTH//2 - SQUARE_SIZE * 10 - 50), top = (self.game.screen_height//2 - BOARD_HEIGHT//2 + 100))
-                myfont = self.get_font(30)
-                text = "Player " + str(self.result) + " wins!!!"
+                myfont = self.get_font(25)
+                text = self.result + " wins!!!"
                 textbox = myfont.render(text, 1, WHITE)
                 self.game.screen.blit(textbox, (self.game.screen_width//2 - textbox.get_width()//2, 40))
                 pygame.display.update()
                 self.game.battleship_game_over = True
-        
+                 
     def load_assets(self):
         self.battleship_background = pygame.image.load(os.path.join('Assets', 'retro_background3.jpg'))
 
