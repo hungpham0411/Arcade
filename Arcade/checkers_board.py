@@ -78,6 +78,11 @@ class CheckersBoard():
 
     # Check if the move is valid or not
     def _make_move(self, row, column):
+        if self.turn == RED:
+            opponent = BLUE
+        else:
+            opponent = RED
+            
         piece = self.grid[row][column]
         # Check if the piece is selected, the destination is a blank square and is in the list of valid moves for the piece
         if self.selected is not None and piece == -1 and (row, column) in self.valid_moves:
@@ -90,12 +95,19 @@ class CheckersBoard():
                 self.game_over = True
                 self.result = "Player" if self.turn == RED else "Computer"
         
-            self.next_player()
+            # Check if the current player has any valid move to place on the board
+            elif len(self.get_all_valid_moves(self.turn)) == 0:
+                self.game_over = True
+                self.result = "Computer" if self.turn == RED else "Player"
             
-            # Check if the next player has any valid move to place on the board
-            if len(self.get_all_valid_moves(self.turn)) == 0:
+            # Check if the opponent has any valid move to place on the board
+            elif len(self.get_all_valid_moves(opponent)) == 0:
                 self.game_over = True
                 self.result = "Player" if self.turn == RED else "Computer"
+                
+            self.next_player()
+            
+            
             
         else:
             return False

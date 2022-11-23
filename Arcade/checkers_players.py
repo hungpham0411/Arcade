@@ -49,12 +49,22 @@ class CheckersAIPlayer:
                     return (piece, move, skip)
         return False
     
-    # Check for king moves
-    def king_move(self, board):
+    # Check for king double jump moves
+    def king_double_jump(self, board):
         for piece in board.get_all_pieces(board.turn):
             if piece.king:
                 for move, skip in board.get_valid_moves(piece).items():
-                    return (piece, move, skip)
+                    if len(skip) == 2:
+                        return (piece, move, skip)
+        return False
+    
+    # Check for king jump moves
+    def king_jump(self, board):
+        for piece in board.get_all_pieces(board.turn):
+            if piece.king:
+                for move, skip in board.get_valid_moves(piece).items():
+                    if len(skip) == 1:
+                        return (piece, move, skip)
         return False
     
     # Check for moves to become a king piece
@@ -71,21 +81,25 @@ class CheckersAIPlayer:
         board = self.checkers.get_board()
         
         # AI normal move
-        if self.max_depth < 5:    
-            if self.could_be_king(board) != False:
+        if self.max_depth < 4:    
+            if self.king_jump(board) != False:
+                return self.king_jump(board)
+            elif self.could_be_king(board) != False:
                 return self.could_be_king(board)
-        
+
         # AI hard move
-        if self.max_depth > 5:
-            if self.could_double_jump(board) != False:
+        if self.max_depth > 4:
+            if self.king_double_jump(board) != False:
+                return self.king_jump(board)
+            elif self.could_double_jump(board) != False:
                 return self.could_double_jump(board)
+            elif self.king_jump(board) != False:
+                return self.king_jump(board)
             elif self.could_be_king(board) != False:
                 return self.could_be_king(board)
             elif self.could_jump(board) != False:
                 return self.could_jump(board)
             
-        if self.king_move(board) != False:
-            return self.king_move(board)
         if self.alpha_beta_search(board) != 0:
             return self.alpha_beta_search(board)
         else:

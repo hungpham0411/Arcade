@@ -160,6 +160,7 @@ class Checkers(State):
         
         # Computer moves
         if not self.game.checkers_game_over and self.board.turn == BLUE:
+            opponent = RED
             piece, move, skipped = self.AI_player.get_move()
             row, column = move
             self.board.move_piece(piece, row, column)
@@ -169,16 +170,23 @@ class Checkers(State):
             if self.board.red_left <= 0 or self.board.blue_left <= 0:
                 self.board.game_over = True
                 self.board.result = "Player" if self.board.turn == RED else "Computer"
+            
+            # Check if the current player has any valid move to place on the board
+            elif len(self.board.get_all_valid_moves(self.board.turn)) == 0:
+                self.game_over = True
+                self.board.result = "Computer" if self.board.turn == RED else "Player"
+            
+            # Check if the opponent has any valid move to place on the board
+            elif len(self.board.get_all_valid_moves(opponent)) == 0:
+                self.game_over = True
+                self.board.result = "Player" if self.board.turn == RED else "Computer"
                 
             self.board.next_player()
             
-            # Check if the next player has any valid move to place on the board
-            if len(self.board.get_all_valid_moves(self.board.turn)) == 0:
-                self.game_over = True
-                self.result = "Player" if self.turn == RED else "Computer"
-            
-            if self.max_depth_AI <5:
+            if self.max_depth_AI < 5:
                 pygame.time.wait(500)
+            else:
+                pygame.time.wait(200)
             self.draw_board()
             
             # Game over message when the game is over
