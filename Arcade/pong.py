@@ -115,7 +115,7 @@ class Pong(State):
                                  "Back", self.get_font(17), BLACK, BLUE, self.game.screen, BUTTON_WIDTH, BUTTON_HEIGHT)
         
         # Back button to return to the pong difficulty screen
-        if back_button.interact_button(self.game.screen) == True:
+        if back_button.interact_button() == True:
             self.exit_state()   # Exit the current state which will move to the previous state
             pygame.time.wait(300)
             

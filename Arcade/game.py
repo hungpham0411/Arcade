@@ -4,12 +4,14 @@ import tictactoe
 import pong
 import battleship
 import checkers
-
+import connectfour
+                        
 FPS = 60
 
 class Game():
     def __init__(self):
         pygame.init()
+        pygame.mixer.init()
         #Screen resolution
         self.screen_width, self.screen_height = 1280, 720
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
@@ -24,6 +26,7 @@ class Game():
         
         # Tic-tac-toe
         self.tictactoe_game_over = False
+        self.tictactoe_symbol_for_player = None
         self.tictactoe_max_depth_AI = 0
 
         # Pong
@@ -38,6 +41,11 @@ class Game():
         self.checkers_game_over = False
         self.checkers_max_depth_AI = None
         
+        # ConnectFour
+        self.connectfour_game_over = False
+        self.connectfour_player_color = None
+        self.connectfour_max_depth_AI = None
+        
     # The main game loop
     def game_loop(self):
         while self.playing:
@@ -45,7 +53,7 @@ class Game():
             if self.tictactoe_game_over == True:
                 pygame.time.delay(3000)
                 self.state_stack.pop()
-                new_state = tictactoe.Tictactoe(self, 'X', self.tictactoe_max_depth_AI)
+                new_state = tictactoe.Tictactoe(self, self.tictactoe_symbol_for_player, self.tictactoe_max_depth_AI)
                 new_state.enter_state()
                 self.tictactoe_game_over = False
                 
@@ -59,7 +67,7 @@ class Game():
             
             # If the Battleship game is over, restart the Battleship game
             if self.battleship_game_over == True:
-                pygame.time.delay(3000)
+                pygame.time.delay(5000)
                 self.state_stack.pop()
                 new_state = battleship.Battleship(self, self.battleship_mode)
                 new_state.enter_state()
@@ -67,11 +75,18 @@ class Game():
             
             # If the Checkers game is over, restart the Checkers game
             if self.checkers_game_over == True:
-                pygame.time.delay(3000)
+                pygame.time.delay(5000)
                 self.state_stack.pop()
                 new_state = checkers.Checkers(self, self.checkers_max_depth_AI)
                 new_state.enter_state()
                 self.checkers_game_over = False
+                
+            if self.connectfour_game_over == True:
+                pygame.time.delay(5000)
+                self.state_stack.pop()
+                new_state = connectfour.ConnectFour(self, self.connectfour_player_color, self.connectfour_max_depth_AI)
+                new_state.enter_state()
+                self.connectfour_game_over = False
                 
             self.render()    
             self.get_events()    

@@ -14,12 +14,9 @@ class Button:
         self.width = width     # The width of the button
         self.height = height   # The height of the button
         
-        # Draw button
-        self.rect = pygame.draw.rect(self.surface, self.base_color, (self.x, self.y, self.width, self.height))
-        self.text_rect = self.text.get_rect(center=(self.x + self.width//2, self.y + self.height//2))
-        surface.blit(self.text, self.text_rect)
+        self.draw_button()
         
-    def interact_button(self, surface):
+    def interact_button(self):
         action = False
         # Get mouse position
         mouse_position = pygame.mouse.get_pos()
@@ -27,9 +24,14 @@ class Button:
         # Check hover and clicked conditions
         if self.rect.collidepoint(mouse_position):
             self.rect = pygame.draw.rect(self.surface, self.hovering_color, (self.x, self.y, self.width, self.height))
-            surface.blit(self.text, self.text_rect)
+            self.surface.blit(self.text, self.text_rect)
             if pygame.mouse.get_pressed()[0] == 1: # Check if the button is clicked
                 action = True
 
         return action
-        
+    
+    def draw_button(self):
+        # Draw button
+        self.rect = pygame.draw.rect(self.surface, self.base_color, (self.x, self.y, self.width, self.height))
+        self.text_rect = self.text.get_rect(center=(self.x + self.width//2, self.y + self.height//2))
+        self.surface.blit(self.text, self.text_rect)

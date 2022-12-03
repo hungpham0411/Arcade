@@ -7,6 +7,7 @@ from tictactoe_difficulty_screen import Tictactoe_Difficulty_Screen
 from pong_difficulty_screen import Pong_Difficulty_Screen
 from battleship_difficulty_screen import Battleship_Difficulty_Screen
 from checkers_difficulty_screen import Checkers_Difficulty_Screen
+from connectfour_difficulty_screen import Connectfour_Difficulty_Screen
 
 LIGHT_BLUE = (26, 26, 179)
 NEON = (1, 255, 244)
@@ -37,7 +38,7 @@ class Gamehub(State):
                                     "Back", self.get_font(35), LIGHT_BLUE, NEON, self.game.screen, BUTTON_WIDTH, BUTTON_HEIGHT)
     
         # Choose Tictactoe
-        if tictactoe_button.interact_button(self.game.screen) == True:
+        if tictactoe_button.interact_button() == True:
             self.game.screen.fill((0,0,0))
             new_state = Tictactoe_Difficulty_Screen(self.game) # Create the Tictactoe_Difficulty_Screen state
             new_state.enter_state()
@@ -45,11 +46,15 @@ class Gamehub(State):
             pygame.time.wait(300)
 
         # Choose ConnectFour
-        if connectfour_button.interact_button(self.game.screen) == True:
-            pass
+        if connectfour_button.interact_button() == True:
+            self.game.screen.fill((0,0,0))
+            new_state = Connectfour_Difficulty_Screen(self.game) # Create the Connectfour_Difficulty_Screen state
+            new_state.enter_state()
+            pygame.display.update()
+            pygame.time.wait(300)
         
         # Choose Checkers
-        if checkers_button.interact_button(self.game.screen) == True:
+        if checkers_button.interact_button() == True:
             self.game.screen.fill((0,0,0))
             new_state = Checkers_Difficulty_Screen(self.game) # Create the Pong_Difficulty_Screen state
             new_state.enter_state()
@@ -57,7 +62,7 @@ class Gamehub(State):
             pygame.time.wait(300)
         
         # Choose Pong
-        if pong_button.interact_button(self.game.screen) == True:
+        if pong_button.interact_button() == True:
             self.game.screen.fill((0,0,0))
             new_state = Pong_Difficulty_Screen(self.game) # Create the Pong_Difficulty_Screen state
             new_state.enter_state()
@@ -65,7 +70,7 @@ class Gamehub(State):
             pygame.time.wait(300)
         
         # Choose Battleship
-        if battleship_button.interact_button(self.game.screen) == True:
+        if battleship_button.interact_button() == True:
             self.game.screen.fill((0,0,0))
             new_state = Battleship_Difficulty_Screen(self.game) # Create the Pong_Difficulty_Screen state
             new_state.enter_state()
@@ -73,7 +78,7 @@ class Gamehub(State):
             pygame.time.wait(300)
         
         # Back button to return to the game menu screen
-        if back_button.interact_button(self.game.screen) == True:
+        if back_button.interact_button() == True:
             self.exit_state()   # Exit the current state which will move to the previous state
             pygame.time.wait(300)
 

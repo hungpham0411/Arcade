@@ -1,6 +1,9 @@
 import copy
 import math
 
+BLUE = (50, 150, 200)
+RED = (250, 50, 100)
+
 class Piece:
     def __init__(self, row, column, color):
         self.row = row
@@ -30,76 +33,83 @@ class CheckersAIPlayer:
 
         return newstate
 
+    def utility(self, board):
+        winner, winner_color = board.result
+        if winner_color == self.color: 
+            return 1000
+        elif winner_color is not None:
+            return -1000
+        else:
+            return self.evaluate(board)
+        
     def evaluate(self, board):
         return board.blue_left - board.red_left + (board.blue_kings * 0.5 - board.red_kings * 0.5)
     
     # Check for double jump moves
-    def could_double_jump(self, board):
-        for piece in board.get_all_pieces(board.turn):
+    def could_double_jump(self, board, color):
+        for piece in board.get_all_pieces(color):
             for move, skip in board.get_valid_moves(piece).items():
                 if len(skip) == 2:
                     return (piece, move, skip)
         return False
     
     # Check for jump moves
-    def could_jump(self, board):
-        for piece in board.get_all_pieces(board.turn):
+    def could_jump(self, board, color):
+        for piece in board.get_all_pieces(color):
             for move, skip in board.get_valid_moves(piece).items():
                 if len(skip) == 1:
                     return (piece, move, skip)
         return False
     
-    # Check for king double jump moves
-    def king_double_jump(self, board):
-        for piece in board.get_all_pieces(board.turn):
-            if piece.king:
-                for move, skip in board.get_valid_moves(piece).items():
-                    if len(skip) == 2:
-                        return (piece, move, skip)
-        return False
-    
     # Check for king jump moves
-    def king_jump(self, board):
-        for piece in board.get_all_pieces(board.turn):
+    def king_jump(self, board, color):
+        for piece in board.get_all_pieces(color):
             if piece.king:
                 for move, skip in board.get_valid_moves(piece).items():
                     if len(skip) == 1:
                         return (piece, move, skip)
-        return False
+        return False  
     
     # Check for moves to become a king piece
-    def could_be_king(self, board):
-        for piece in board.get_all_pieces(board.turn):
+    def could_be_king(self, board, color):
+        for piece in board.get_all_pieces(color):
             if not piece.king:
                 for move, skip in board.get_valid_moves(piece).items():
                     row, column = move
                     if row == 7 or row == 0:
                         return (piece, move, skip)
         return False
-                    
+
+    def could_jump_and_be_king(self, board, color):
+        for piece in board.get_all_pieces(color):
+            if not piece.king:
+                for move, skip in board.get_valid_moves(piece).items():
+                    row, column = move
+                    if len(skip) == 1 and (row == 7 or row == 0):
+                        return (piece, move, skip)
+        return False
+    
     def get_move(self):
         board = self.checkers.get_board()
         
         # AI normal move
         if self.max_depth < 4:    
-            if self.king_jump(board) != False:
-                return self.king_jump(board)
-            elif self.could_be_king(board) != False:
-                return self.could_be_king(board)
+            if self.king_jump(board, self.color) != False:
+                return self.king_jump(board, self.color)
+            elif self.could_be_king(board, self.color) != False:
+                return self.could_be_king(board, self.color)
+            elif self.could_jump(board, self.color) != False:
+                return self.could_jump(board, self.color)
 
         # AI hard move
         if self.max_depth > 4:
-            if self.king_double_jump(board) != False:
-                return self.king_jump(board)
-            elif self.could_double_jump(board) != False:
-                return self.could_double_jump(board)
-            elif self.king_jump(board) != False:
-                return self.king_jump(board)
-            elif self.could_be_king(board) != False:
-                return self.could_be_king(board)
-            elif self.could_jump(board) != False:
-                return self.could_jump(board)
-            
+            if self.could_double_jump(board, self.color) != False:
+                return self.could_double_jump(board, self.color)
+            elif self.king_jump(board, self.color) != False:
+                return self.king_jump(board, self.color)
+            elif self.could_be_king(board, self.color) != False:
+                return self.could_be_king(board, self.color)
+
         if self.alpha_beta_search(board) != 0:
             return self.alpha_beta_search(board)
         else:
@@ -112,8 +122,8 @@ class CheckersAIPlayer:
         return action
 
     def max_value(self, depth, board, alpha, beta):
-        if depth == self.max_depth or board.result != None:
-            return self.evaluate(board), None
+        if depth == self.max_depth or board.result != (None, None):
+            return self.utility(board), None
         v = -math.inf
         action = 0
         for piece in board.get_all_pieces(self.color):
@@ -127,8 +137,8 @@ class CheckersAIPlayer:
         return v, action
     
     def min_value(self, depth, board, alpha, beta):
-        if depth == self.max_depth or board.result != None:
-            return self.evaluate(board), None
+        if depth == self.max_depth or board.result != (None, None):
+            return self.utility(board), None
         v = math.inf
         action = 0
         for piece in board.get_all_pieces(self.color):

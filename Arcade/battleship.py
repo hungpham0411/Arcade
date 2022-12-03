@@ -37,48 +37,55 @@ class Battleship(State):
         self.player2 = Player()
         self.player_turn = True
         self.computer_turn = True if not self.human1 else False
+        
+        self.miss_sound = pygame.mixer.Sound(os.path.join('Assets', 'battleship_miss_sound.mp3'))
+        self.hit_sound = pygame.mixer.Sound(os.path.join('Assets', 'battleship_hit_sound.mp3'))
+        
         self.over = False
         self.result = None
         
         self.load_assets()
     
-    def make_move(self, i):
+    def make_move(self, move):
         player = self.player1 if self.player_turn else self.player2
         opponent = self.player2 if self.player_turn else self.player1
         
-        if player.search[i] != "U":
+        if player.search[move] != "U":
             return
         
         hit = False
         
-        #set miss ("M") or hit ("H")
-        if i in opponent.indexes:
-            player.search[i] = "H"
+        # If the move is on the opponent ships
+        if move in opponent.indexes: 
+            player.search[move] = "H"
             hit = True
-            #check if ship is sunk ("S")
+            # Check if ship is sunk ("S")
             for ship in opponent.ships:
                 sunk = True
-                for i in ship.indexes:
-                    if player.search[i] == "U":
+                # Check if there is still any square of the ship that is not hit
+                for index in ship.indexes: 
+                    if player.search[index] == "U":
                         sunk = False
                         break
                 if sunk:
-                    for i in ship.indexes:
-                        player.search[i] = "S"
-        else:
-            player.search[i] = "M"
-
+                    for index in ship.indexes:
+                        player.search[index] = "S"
+        # If the move is not on the opponent ships
+        else: 
+            player.search[move] = "M"
+            
         #check if game is over
         game_over = True
-        for i in opponent.indexes:
-            if player.search[i] == "U":
+        for index in opponent.indexes:
+            if player.search[index] == "U":
                 game_over = False
+                break
         self.over = game_over
         self.result = "Player" if self.player_turn else "Computer"
                 
         #change active team
         #if not hit:        # If you want to play alternative turns, leave this comment
-                            # if not (if you hit you can continue), uncomment this 
+                            # if not (if you hit you can continue to make a move), uncomment this 
         self.player_turn = not self.player_turn
         
         #switch between human and computer turns
@@ -170,7 +177,7 @@ class Battleship(State):
     # Draw the ships onto the grid
     def draw_ships(self, player, left = 0, top = 0):
         for ship in player.ships:
-            x = left + ship.col * SQUARE_SIZE + INDENT
+            x = left + ship.column * SQUARE_SIZE + INDENT
             y = top + ship.row * SQUARE_SIZE + INDENT
         
             if ship.orientation == "h":
@@ -185,8 +192,8 @@ class Battleship(State):
     # Draw the Player and Computer Text
     def draw_players_text(self):
         score_font = self.get_font(20)
-        player_score_text = score_font.render("Player", 1, WHITE)
-        computer_score_text = score_font.render("Computer", 1, WHITE)
+        player_score_text = score_font.render("Player Board", 1, WHITE)
+        computer_score_text = score_font.render("Computer Board", 1, WHITE)
         
         self.game.screen.blit(player_score_text, (self.game.screen_width//4 - player_score_text.get_width()//2 + 60, 100))
         self.game.screen.blit(computer_score_text, (3 * self.game.screen_width//4 - computer_score_text.get_width()//2 - 70, 100))
@@ -220,7 +227,7 @@ class Battleship(State):
                                  #"Rules", self.get_font(17), BLACK, BLUE, self.game.screen, BUTTON_WIDTH, BUTTON_HEIGHT)
         
         # Back button to return to the pong difficulty screen
-        if back_button.interact_button(self.game.screen) == True:
+        if back_button.interact_button() == True:
             self.exit_state()   # Exit the current state which will move to the previous state
             pygame.time.wait(300)
             
@@ -249,10 +256,10 @@ class Battleship(State):
                     # Make sure the player's move is on the grid (move board for player)
                     if move_board_left_vertical_border < x < move_board_right_vertical_border and move_board_top_horizontal_border < y < move_board_bottom_horizontal_border:
                         row = y // SQUARE_SIZE - 4
-                        col = x // SQUARE_SIZE - 17
-                        index = row * 10 + col
+                        column = x // SQUARE_SIZE - 17
+                        index = row * 10 + column
                         self.make_move(index)
-                    
+
                     self.draw_board()  
                     
                     # Game over message when the game is over

@@ -10,7 +10,7 @@ from checkers_players import Piece
 
 class CheckersBoard():
     def __init__(self):
-        self.grid = None
+        self.grid = []
         self.selected = None
         self.turn = RED             # Turn of the player: {RED: player, BLUE: computer}
         self.valid_moves = {}       # Number of valid moves for the selected piece (reset when change turn)
@@ -18,12 +18,11 @@ class CheckersBoard():
         self.red_kings = self.blue_kings = 0    # Number of king pieces for player and computer
         
         self.game_over = False
-        self.result = None
+        self.result = (None, None)  # (Player, Color)
         self.initialize()
     
     # Initialize the grid
     def initialize(self):
-        self.grid = []
         for i in range(8):
             row = []
             if i % 2 == 0:
@@ -91,23 +90,18 @@ class CheckersBoard():
             if skipped is not None:
                 self.remove_piece(skipped)
             
-            if self.red_left <= 0 or self.blue_left <= 0:
+            # Check if there is any red piece or blue piece left on the board + 
+            # check if the opponent has any valid move to place on the board
+            if self.red_left <= 0 or self.blue_left <= 0 or len(self.get_all_valid_moves(opponent)) == 0:
                 self.game_over = True
-                self.result = "Player" if self.turn == RED else "Computer"
+                self.result = ("Player", RED) if self.turn == RED else ("Computer", BLUE)
         
             # Check if the current player has any valid move to place on the board
             elif len(self.get_all_valid_moves(self.turn)) == 0:
                 self.game_over = True
-                self.result = "Computer" if self.turn == RED else "Player"
-            
-            # Check if the opponent has any valid move to place on the board
-            elif len(self.get_all_valid_moves(opponent)) == 0:
-                self.game_over = True
-                self.result = "Player" if self.turn == RED else "Computer"
+                self.result = ("Computer", BLUE) if self.turn == RED else ("Player", RED)
                 
             self.next_player()
-            
-            
             
         else:
             return False

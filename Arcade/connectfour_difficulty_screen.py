@@ -3,14 +3,15 @@ import button
 import os
 import sys
 from state import State
-from checkers import Checkers
+from connectfour import ConnectFour
 
 LIGHT_BLUE = (26, 26, 179)
 NEON = (1, 255, 244)
 BUTTON_WIDTH = 300
 BUTTON_HEIGHT = 70
+RED = (255, 0, 0)
 
-class Checkers_Difficulty_Screen(State):
+class Connectfour_Difficulty_Screen(State):
     def __init__(self, game):
         State.__init__(self, game)
         self.load_assets()
@@ -29,13 +30,13 @@ class Checkers_Difficulty_Screen(State):
 
         # Choose the Normal mode
         if normal_button.interact_button() == True:
-            new_state = Checkers(self.game, 3) # Create the Checkers state with normal AI
+            new_state = ConnectFour(self.game, RED, 4) # Create the ConnectFour state with normal AI
             new_state.enter_state()
             pygame.time.wait(300)
 
         # Choose the Hard mode
         if hard_button.interact_button() == True:
-            new_state = Checkers(self.game, 5) # Create the Checkers state with hard AI 
+            new_state = ConnectFour(self.game, RED, 5) # Create the ConnectFour state with hard AI 
             new_state.enter_state()
             pygame.time.wait(300)
 
@@ -57,7 +58,7 @@ class Checkers_Difficulty_Screen(State):
                     sys.exit()
 
     def load_assets(self):
-        self.checkers_difficulty_screen_background = pygame.image.load(os.path.join('Assets', 'retro_background2.jpg'))
+        self.checkers_difficulty_screen_background = pygame.image.load(os.path.join('Assets', 'cyberpunk_background4.png'))
 
     def get_font(self, size):
         return pygame.font.Font(os.path.join('Assets', 'font2.ttf'), size)

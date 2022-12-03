@@ -75,7 +75,6 @@ class TicTacToeAIPlayer:
             return self.evaluate(state)
     
     def evaluate(self, state):
-        # Checking for Rows for X or O victory.
         value = 0
         if self.symbol == 'X':
             opponent = 'O'
@@ -89,7 +88,6 @@ class TicTacToeAIPlayer:
                 elif state[row][0] == opponent:
                     value -= 100
  
-        # Checking for Columns for X or O victory.
         for col in range(3) :
             if state[0][col] is not None and state[0][col] == state[1][col] and state[1][col] == state[2][col]:
                 if state[0][col] == self.symbol:
@@ -97,7 +95,6 @@ class TicTacToeAIPlayer:
                 elif state[0][col] == opponent:
                     value -= 100
  
-        # Checking for Diagonals for X or O victory.
         if state[0][0] is not None and state[0][0] == state[1][1] and state[1][1] == state[2][2]:
             if state[0][0] == self.symbol:
                 value += 100
@@ -110,7 +107,6 @@ class TicTacToeAIPlayer:
             elif state[0][2] == opponent:
                 value -= 100
  
-        # Else if none of them have won then return 0
         return value
 
     def get_winner(self, state):
@@ -138,13 +134,6 @@ class TicTacToeAIPlayer:
             return 'X'
         else:
             return 'O'
-        
-    def cutoff_test(self, state, depth):
-        if depth == self.max_depth:
-            return True
-        if self.terminal_test(state):
-            return True
-        return False
     
     def get_move(self):     
         return self.alpha_beta_search(self.tictactoe.get_grid())
@@ -154,7 +143,7 @@ class TicTacToeAIPlayer:
         return action
 
     def max_value(self, depth, state, alpha, beta):
-        if self.terminal_test(state) or self.cutoff_test(state,depth):
+        if self.terminal_test(state) or depth == self.max_depth:
             return self.utility(state), None
         v = -math.inf
         action = 0
@@ -168,7 +157,7 @@ class TicTacToeAIPlayer:
         return v, action
     
     def min_value(self, depth, state, alpha, beta):
-        if self.terminal_test(state) or self.cutoff_test(state,depth):
+        if self.terminal_test(state) or depth == self.max_depth:
             return self.utility(state), None
         v = math.inf
         action = 0

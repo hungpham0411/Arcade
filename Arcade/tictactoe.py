@@ -18,11 +18,11 @@ PLAYER2 = 'O'
 class Tictactoe(State):
     def __init__(self, game, symbol_for_player, max_depth_AI):
         State.__init__(self, game)
-        self.load_assets()
         self.players = []
-        self.grid = None
+        self.grid = []
         self.turn = -1
         self.max_depth_AI = max_depth_AI
+        self.game.tictactoe_symbol_for_player = symbol_for_player
         self.game.tictactoe_max_depth_AI = max_depth_AI
         
         # Set the human player according the symbol_for_player attribute
@@ -46,7 +46,8 @@ class Tictactoe(State):
                 self.players.append(player2)
                 
         self.initialize()
-
+        self.load_assets()
+        
     # Initialize the grid
     def initialize(self):
         self.grid = [[None, None, None], [None, None, None], [None, None, None]]
@@ -90,6 +91,9 @@ class Tictactoe(State):
     def get_turn(self):
         return self.turn
 
+    def get_grid(self):
+        return self.grid
+    
     # Place the move
     def place_token(self, move):
         self.set_position(move, self.get_turn())
@@ -99,9 +103,6 @@ class Tictactoe(State):
         if p == 'X':
             return self.players[0]
         return self.players[1]
-    
-    def get_grid(self):
-        return self.grid
     
     # Draw the tic-tac-toe grid
     def draw_grid(self):
@@ -163,28 +164,26 @@ class Tictactoe(State):
                                  "Back", self.get_font(17), BLACK, BLUE, self.game.screen, BUTTON_WIDTH, BUTTON_HEIGHT)
         
         # Option for the human player to go first (as 'X')
-        if X_button.interact_button(self.game.screen) == True:
+        if X_button.interact_button() == True:
             self.game.state_stack.pop()
             new_state = Tictactoe(self.game, 'X', self.max_depth_AI)
             new_state.enter_state()
         
         # Option for the human player to go second (as 'O')
-        if O_button.interact_button(self.game.screen) == True:
+        if O_button.interact_button() == True:
             self.game.state_stack.pop()
             new_state = Tictactoe(self.game, 'O', self.max_depth_AI)
             new_state.enter_state() 
         
         # Back button to return to the tictactoe difficulty screen
-        if back_button.interact_button(self.game.screen) == True:
+        if back_button.interact_button() == True:
             self.exit_state()   # Exit the current state which will move to the previous state
             pygame.time.wait(300)
         
         self.draw_board()
     
     def get_events(self):
-        myfont = self.get_font(30)
-        self.draw_board()
-        self.game.tictactoe_game_over = False
+        myfont = self.get_font(25)
         player_char = self.get_turn()
         player = self.get_player(player_char)
         

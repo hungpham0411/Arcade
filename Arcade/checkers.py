@@ -121,13 +121,12 @@ class Checkers(State):
                                  #"Rules", self.get_font(17), BLACK, BLUE, self.game.screen, BUTTON_WIDTH, BUTTON_HEIGHT)
         
         # Back button to return to the pong difficulty screen
-        if back_button.interact_button(self.game.screen) == True:
+        if back_button.interact_button() == True:
             self.exit_state()   # Exit the current state which will move to the previous state
             pygame.time.wait(300)
             
         #if rules_button.interact_button(self.game.screen) == True:
-            
-            
+        
         self.draw_board()
             
     def get_events(self):
@@ -142,19 +141,20 @@ class Checkers(State):
                     sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Player moves
-                pos = pygame.mouse.get_pos()
-                x = pos[0] // SQUARE_SIZE - 4 
-                y = (pos[1]-40) // SQUARE_SIZE 
                 if not self.game.checkers_game_over and self.board.turn == RED:
+                    # Position of player's move
+                    pos = pygame.mouse.get_pos()
+                    x = pos[0] // SQUARE_SIZE - 4 
+                    y = (pos[1]-40) // SQUARE_SIZE 
                     self.board.select(y,x)  
-                
                     self.draw_board()
                 
                     if self.board.game_over:
-                        myfont = self.get_font(30)
-                        text = self.board.result + " wins!!!"
-                        textbox = myfont.render(text, 1, BLUE)
-                        self.game.screen.blit(textbox, (self.game.screen_width//2 - textbox.get_width()//2, 40))
+                        myfont = self.get_font(25)
+                        winner, winner_color = self.board.result
+                        text = winner + " wins!!!"
+                        textbox = myfont.render(text, 1, winner_color)
+                        self.game.screen.blit(textbox, (20, 20))
                         pygame.display.update()
                         self.game.checkers_game_over = True
         
@@ -167,19 +167,16 @@ class Checkers(State):
             if skipped is not None:
                 self.board.remove_piece(skipped)
             
-            if self.board.red_left <= 0 or self.board.blue_left <= 0:
+            # Check if there is any red piece or blue piece left on the board + 
+            # check if player has any valid move to place on the board
+            if self.board.red_left <= 0 or self.board.blue_left <= 0 or len(self.board.get_all_valid_moves(opponent)) == 0:
                 self.board.game_over = True
-                self.board.result = "Player" if self.board.turn == RED else "Computer"
+                self.board.result = ("Player", RED) if self.board.turn == RED else ("Computer", BLUE)
             
             # Check if the current player has any valid move to place on the board
             elif len(self.board.get_all_valid_moves(self.board.turn)) == 0:
-                self.game_over = True
-                self.board.result = "Computer" if self.board.turn == RED else "Player"
-            
-            # Check if the opponent has any valid move to place on the board
-            elif len(self.board.get_all_valid_moves(opponent)) == 0:
-                self.game_over = True
-                self.board.result = "Player" if self.board.turn == RED else "Computer"
+                self.board.game_over = True
+                self.board.result = ("Player", RED)
                 
             self.board.next_player()
             
@@ -187,14 +184,16 @@ class Checkers(State):
                 pygame.time.wait(500)
             else:
                 pygame.time.wait(200)
+                
             self.draw_board()
             
             # Game over message when the game is over
             if self.board.game_over:
-                myfont = self.get_font(30)
-                text = self.board.result + " wins!!!"
-                textbox = myfont.render(text, 1, BLUE)
-                self.game.screen.blit(textbox, (self.game.screen_width//2 - textbox.get_width()//2, 40))
+                myfont = self.get_font(25)
+                winner, winner_color = self.board.result
+                text = winner + " wins!!!"
+                textbox = myfont.render(text, 1, winner_color)
+                self.game.screen.blit(textbox, (20, 20))
                 pygame.display.update()
                 self.game.checkers_game_over = True
         

@@ -29,7 +29,7 @@ class GameMenu(State):
                                     "EXIT", self.get_font(40), PURPLE, GREEN, self.game.screen, BUTTON_WIDTH, BUTTON_HEIGHT)
 
         # Choose Start
-        if start_button.interact_button(self.game.screen) == True:
+        if start_button.interact_button() == True:
             self.game.screen.fill((0,0,0))
             new_state = Gamehub(self.game) # Create the Gamehub state
             new_state.enter_state()
@@ -37,11 +37,11 @@ class GameMenu(State):
             pygame.time.wait(300)
 
         # Choose Settings
-        if settings_button.interact_button(self.game.screen) == True:
+        if settings_button.interact_button() == True:
             pass
 
         # Exit button to exit the game
-        if exit_button.interact_button(self.game.screen) == True:
+        if exit_button.interact_button() == True:
             pygame.quit()
             sys.exit()
 
