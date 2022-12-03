@@ -156,9 +156,9 @@ class ConnectFour(State):
                 pygame.draw.rect(self.game.screen, BLUE, square)
                 pygame.draw.circle(self.game.screen, WHITE, (self.game.screen_width//2 - BOARD_WIDTH//2 + column * SQUARE_SIZE + SQUARE_SIZE//2, 
                                                              self.game.screen_height//2 - BOARD_HEIGHT//2 + row * SQUARE_SIZE + SQUARE_SIZE + SQUARE_SIZE//2), 35)
-        vertical_border_left = pygame.Rect(self.game.screen_width//2 - BOARD_WIDTH//2 - 6, self.game.screen_height//2 - BOARD_HEIGHT//2, 6, BOARD_HEIGHT + 6)
-        vertical_border_right = pygame.Rect(self.game.screen_width//2 + BOARD_WIDTH//2, self.game.screen_height//2 - BOARD_HEIGHT//2, 6, BOARD_HEIGHT + 6)
-        horizontal_border_top = pygame.Rect(self.game.screen_width//2 - BOARD_WIDTH//2 - 6, self.game.screen_height//2 - BOARD_HEIGHT//2 - 6, BOARD_WIDTH + 12, 6)
+        vertical_border_left = pygame.Rect(self.game.screen_width//2 - BOARD_WIDTH//2 - 6, self.game.screen_height//2 - BOARD_HEIGHT//2 + SQUARE_SIZE, 6, BOARD_HEIGHT - SQUARE_SIZE + 6)
+        vertical_border_right = pygame.Rect(self.game.screen_width//2 + BOARD_WIDTH//2, self.game.screen_height//2 - BOARD_HEIGHT//2 + SQUARE_SIZE, 6, BOARD_HEIGHT - SQUARE_SIZE + 6)
+        horizontal_border_top = pygame.Rect(self.game.screen_width//2 - BOARD_WIDTH//2 - 6, self.game.screen_height//2 - BOARD_HEIGHT//2  + SQUARE_SIZE - 6, BOARD_WIDTH + 12, 6)
         horizontal_border_bottom = pygame.Rect(self.game.screen_width//2 - BOARD_WIDTH//2, self.game.screen_height//2 + BOARD_HEIGHT//2, BOARD_WIDTH, 6)
         
         pygame.draw.rect(self.game.screen, BLUE, vertical_border_left)
@@ -221,8 +221,6 @@ class ConnectFour(State):
             
             # Track the piece and synchronize it with the player's mouse position
             if event.type == pygame.MOUSEMOTION:
-                square = pygame.Rect(self.game.screen_width//2 - BOARD_WIDTH//2, self.game.screen_height//2 - BOARD_HEIGHT//2, BOARD_WIDTH, SQUARE_SIZE)
-                pygame.draw.rect(self.game.screen, WHITE, square)
                 if self.turn == self.player_color and not self.game.connectfour_game_over:
                     pos = pygame.mouse.get_pos()
                     in_width_boundary = (self.game.screen_width//2 - BOARD_WIDTH//2 < pos[0] < self.game.screen_width//2 + BOARD_WIDTH//2)
@@ -230,13 +228,11 @@ class ConnectFour(State):
                     if in_width_boundary and in_height_boundary:
                         column = (pos[0] - (self.game.screen_width//2 - BOARD_WIDTH//2)) // SQUARE_SIZE
                         start = self.game.screen_width//2 - BOARD_WIDTH//2 + column * SQUARE_SIZE + SQUARE_SIZE//2
-                        pygame.draw.circle(self.game.screen, self.player_color, (start, self.game.screen_height//2 - BOARD_HEIGHT//2 + SQUARE_SIZE//2), 35)
+                        pygame.draw.circle(self.game.screen, self.player_color, (start, self.game.screen_height//2 - BOARD_HEIGHT//2 + SQUARE_SIZE//2 - 6), 35)
                 self.draw_board()
             
+            # Player moves
             if event.type == pygame.MOUSEBUTTONDOWN:
-                square = pygame.Rect(self.game.screen_width//2 - BOARD_WIDTH//2, self.game.screen_height//2 - BOARD_HEIGHT//2, BOARD_WIDTH, SQUARE_SIZE)
-                pygame.draw.rect(self.game.screen, WHITE, square)
-                # Player moves
                 if self.turn == self.player_color and not self.game.connectfour_game_over:
                     # Position of player's move 
                     pos = pygame.mouse.get_pos()
@@ -265,7 +261,8 @@ class ConnectFour(State):
                             winner_color = WHITE
                         myfont = self.get_font(25)
                         textbox = myfont.render(text, 1, winner_color)
-                        self.game.screen.blit(textbox, (20, 20))
+                        self.draw_board()
+                        self.game.screen.blit(textbox, (self.game.screen_width//2 - textbox.get_width()//2, SQUARE_SIZE - 10))
                         pygame.display.update()
                         self.game.connectfour_game_over = True  
                     
@@ -289,7 +286,8 @@ class ConnectFour(State):
                     winner_color = WHITE
                 myfont = self.get_font(25)
                 textbox = myfont.render(text, 1, winner_color)
-                self.game.screen.blit(textbox, (20, 20))
+                self.draw_board()
+                self.game.screen.blit(textbox, (self.game.screen_width//2 - textbox.get_width()//2, SQUARE_SIZE - 10))
                 pygame.display.update()
                 self.game.connectfour_game_over = True
 
