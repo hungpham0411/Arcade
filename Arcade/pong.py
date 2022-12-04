@@ -95,12 +95,16 @@ class Pong(State):
         win_font = self.get_font(25)
         # The computer wins the series if wins 10 games
         if self.computer_win == 10: 
+            # Make the sound effect when the game is over
+            self.gameover_sound.play()
             computer_win_text = win_font.render("Computer wins!!!", 1, WHITE)
             self.game.screen.blit(computer_win_text, (self.game.screen_width//2 - computer_win_text.get_width()//2, 40))
             self.game.pong_game_over = True
             
         # The human player wins the series if wins 10 games
         if self.player_win == 10: 
+            # Make the sound effect when the game is over
+            self.gameover_sound.play()
             player_win_text = win_font.render("Player wins!!!", 1, WHITE)
             self.game.screen.blit(player_win_text, (self.game.screen_width//2 - player_win_text.get_width()//2, 40))
             self.game.pong_game_over = True
@@ -179,10 +183,14 @@ class Pong(State):
         
         # Ball has hit the top of the board
         if self.ball_y < self.game.screen_height//2 - BOARD_HEIGHT//2 + BALL_SIZE + 5: 
+            # Make the sound effect when the ball hit the top of the board
+            self.pong_sound.play()
             self.ball_y_momentum = BALL_MOMENTUM
             
         # Ball has hit the bottom of the board
         if self.ball_y > self.game.screen_height//2 + BOARD_HEIGHT//2 - BALL_SIZE: 
+            # Make the sound effect when the ball hit the bottom of the board
+            self.pong_sound.play()
             self.ball_y_momentum = -BALL_MOMENTUM
         
         # Human player loses if the ball gets through the player to the left edge
@@ -206,7 +214,9 @@ class Pong(State):
         # Handle collisions between the ball and the paddles
         # The ball collides with the left paddle (human player)
         if (self.ball_x <= self.game.screen_width//2 - BOARD_WIDTH//2 + PADDLE_INSET + PADDLE_WIDTH + 5) and (self.ball_x > self.game.screen_width//2 - BOARD_WIDTH//2 + PADDLE_INSET):
-            if self.ball_y >= self.left_paddle_y and self.ball_y <= self.left_paddle_y + PADDLE_HEIGHT:
+            if self.ball_y + 3 >= self.left_paddle_y and self.ball_y -3<= self.left_paddle_y + PADDLE_HEIGHT:
+                # Make the sound effect when the ball hit the paddle
+                self.pong_sound.play()
                 # Check if the ball collides to the top hafl of the left paddle
                 if self.ball_y >= self.left_paddle_y and self.ball_y <= self.left_paddle_y + PADDLE_HEIGHT//2:
                     self.ball_x_momentum = BALL_MOMENTUM 
@@ -218,7 +228,9 @@ class Pong(State):
                     
         # The ball collides with the right paddle (AI player)
         if (self.ball_x >= self.game.screen_width//2 + BOARD_WIDTH//2 - PADDLE_INSET - PADDLE_WIDTH + 5) and (self.ball_x < self.game.screen_width//2 + BOARD_WIDTH//2 - PADDLE_INSET):
-            if self.ball_y >= self.right_paddle_y and self.ball_y <= self.right_paddle_y + PADDLE_HEIGHT:
+            if self.ball_y +3>= self.right_paddle_y and self.ball_y -3<= self.right_paddle_y + PADDLE_HEIGHT:
+                # Make the sound effect when the ball hit the paddle
+                self.pong_sound.play()
                 # Check if the ball collides to the top half of the right paddle
                 if self.ball_y >= self.right_paddle_y and self.ball_y <= self.right_paddle_y + PADDLE_HEIGHT//3:
                     self.ball_x_momentum = -BALL_MOMENTUM 
@@ -233,6 +245,10 @@ class Pong(State):
         
     def load_assets(self):
         self.pong_background = pygame.image.load(os.path.join('Assets', 'cyberpunk_background3.jpg'))
+        
+        # Sound effects
+        self.pong_sound = pygame.mixer.Sound(os.path.join('Assets', 'pong_sound1.wav'))
+        self.gameover_sound = pygame.mixer.Sound(os.path.join('Assets', 'gameover_sound.wav'))
 
     def get_font(self, size):
         return pygame.font.Font(os.path.join('Assets', 'font.ttf'), size)

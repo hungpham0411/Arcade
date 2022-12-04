@@ -53,6 +53,7 @@ class ConnectFour(State):
         row = 5
         while self.grid[row][column] != -1:
             row -= 1
+        self.connectfour_sound.play()   # Sound effect when making a move
         self.grid[row][column] = player
         self.result = self.check_for_winner()
             
@@ -204,6 +205,7 @@ class ConnectFour(State):
         
         # Option for the human player to go second (as YELLOW)
         if yellow_button.interact_button() == True:
+            pygame.time.wait(50)
             self.game.state_stack.pop()
             new_state = ConnectFour(self.game, YELLOW, self.max_depth_AI)
             new_state.enter_state() 
@@ -250,6 +252,8 @@ class ConnectFour(State):
                     
                     # Game over message when the game is over
                     if self.game_over:
+                        # Make the sound effect when the game is over
+                        self.gameover_sound.play()
                         if self.result == self.player_color:
                             text = "Player wins!!!"
                             winner_color = self.player_color
@@ -267,14 +271,16 @@ class ConnectFour(State):
                         self.game.connectfour_game_over = True  
                     
         # Computer moves
-        if self.turn == self.AI_player.color and not self.game.connectfour_game_over:                
+        if self.turn == self.AI_player.color and not self.game.connectfour_game_over:      
+            pygame.time.wait(500)          
             move = self.AI_player.get_move()
             self.place_token(move)
-            
             self.draw_board()
                     
             # Game over message when the game is over
             if self.game_over:
+                # Make the sound effect when the game is over
+                self.gameover_sound.play()
                 if self.result == self.player_color:
                     text = "Player wins!!!"
                     winner_color = self.player_color
@@ -293,6 +299,10 @@ class ConnectFour(State):
 
     def load_assets(self):
         self.connectfour_background = pygame.image.load(os.path.join('Assets', 'cyberpunk_background4.png'))
+        
+        # Sound effects
+        self.connectfour_sound = pygame.mixer.Sound(os.path.join('Assets','connectfour_sound.mp3'))
+        self.gameover_sound = pygame.mixer.Sound(os.path.join('Assets', 'gameover_sound.wav'))
 
     def get_font(self, size):
         return pygame.font.Font(os.path.join('Assets', 'font.ttf'), size)

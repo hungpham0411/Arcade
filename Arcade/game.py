@@ -67,7 +67,7 @@ class Game():
             
             # If the Battleship game is over, restart the Battleship game
             if self.battleship_game_over == True:
-                pygame.time.delay(5000)
+                pygame.time.delay(3000)
                 self.state_stack.pop()
                 new_state = battleship.Battleship(self, self.battleship_mode)
                 new_state.enter_state()
@@ -75,14 +75,14 @@ class Game():
             
             # If the Checkers game is over, restart the Checkers game
             if self.checkers_game_over == True:
-                pygame.time.delay(5000)
+                pygame.time.delay(3000)
                 self.state_stack.pop()
                 new_state = checkers.Checkers(self, self.checkers_max_depth_AI)
                 new_state.enter_state()
                 self.checkers_game_over = False
                 
             if self.connectfour_game_over == True:
-                pygame.time.delay(5000)
+                pygame.time.delay(3000)
                 self.state_stack.pop()
                 new_state = connectfour.ConnectFour(self, self.connectfour_player_color, self.connectfour_max_depth_AI)
                 new_state.enter_state()

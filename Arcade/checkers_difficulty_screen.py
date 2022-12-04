@@ -29,18 +29,21 @@ class Checkers_Difficulty_Screen(State):
 
         # Choose the Normal mode
         if normal_button.interact_button() == True:
+            pygame.mixer.music.pause()  # Pause the background music when choose a mode
             new_state = Checkers(self.game, 3) # Create the Checkers state with normal AI
             new_state.enter_state()
             pygame.time.wait(300)
 
         # Choose the Hard mode
         if hard_button.interact_button() == True:
+            pygame.mixer.music.pause()  # Pause the background music when choose a mode
             new_state = Checkers(self.game, 5) # Create the Checkers state with hard AI 
             new_state.enter_state()
             pygame.time.wait(300)
 
         # Back button to return to the game hub screen
         if back_button.interact_button() == True:
+            pygame.mixer.music.unpause()   # Unpause the background music when get back to the Game Hub
             self.exit_state()   # Exit the current state which will move to the previous state
             pygame.time.wait(300)
 

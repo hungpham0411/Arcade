@@ -38,9 +38,6 @@ class Battleship(State):
         self.player_turn = True
         self.computer_turn = True if not self.human1 else False
         
-        self.miss_sound = pygame.mixer.Sound(os.path.join('Assets', 'battleship_miss_sound.mp3'))
-        self.hit_sound = pygame.mixer.Sound(os.path.join('Assets', 'battleship_hit_sound.mp3'))
-        
         self.over = False
         self.result = None
         
@@ -58,6 +55,8 @@ class Battleship(State):
         # If the move is on the opponent ships
         if move in opponent.indexes: 
             player.search[move] = "H"
+            # Play the sound effect for hit moves 
+            self.hit_sound.play()
             hit = True
             # Check if ship is sunk ("S")
             for ship in opponent.ships:
@@ -73,6 +72,8 @@ class Battleship(State):
         # If the move is not on the opponent ships
         else: 
             player.search[move] = "M"
+            # Play the sound effect for miss moves 
+            self.miss_sound.play()
             
         #check if game is over
         game_over = True
@@ -219,12 +220,15 @@ class Battleship(State):
     def render(self):
         # Render current state to the screen
         self.game.screen.blit(pygame.transform.scale(self.battleship_background,(self.game.screen_width, self.game.screen_height)), (0,0)) 
+        speaker_icon = pygame.transform.scale(self.speaker_icon,(BUTTON_WIDTH//2, BUTTON_HEIGHT//2))
         
         # Buttons
         back_button = button.Button(self.game.screen_width - BUTTON_WIDTH - 10, 10, 
-                                 "Back", self.get_font(17), BLACK, STRONG_BLUE, self.game.screen, BUTTON_WIDTH, BUTTON_HEIGHT)
+                                    "Back", self.get_font(17), BLACK, STRONG_BLUE, self.game.screen, BUTTON_WIDTH, BUTTON_HEIGHT)
         #rules_button = button.Button(self.game.screen_width - BUTTON_WIDTH - 10, 10, 
                                  #"Rules", self.get_font(17), BLACK, BLUE, self.game.screen, BUTTON_WIDTH, BUTTON_HEIGHT)
+        #sound_button = button.Button(self.game.screen_width - BUTTON_WIDTH - 10, 20 + BUTTON_HEIGHT, 
+                                 #None, self.get_font(17), BLACK, STRONG_BLUE, self.game.screen, BUTTON_WIDTH, BUTTON_HEIGHT, speaker_icon)
         
         # Back button to return to the pong difficulty screen
         if back_button.interact_button() == True:
@@ -232,7 +236,11 @@ class Battleship(State):
             pygame.time.wait(300)
             
         #if rules_button.interact_button(self.game.screen) == True:
-            
+        
+        #if sound_button.interact_button() == True:
+            #self.hit_sound.pause()
+            #self.miss_sound.pause()
+        
         self.draw_board()
             
     def get_events(self):
@@ -259,36 +267,39 @@ class Battleship(State):
                         column = x // SQUARE_SIZE - 17
                         index = row * 10 + column
                         self.make_move(index)
-
-                    self.draw_board()  
+                        self.draw_board()  
                     
-                    # Game over message when the game is over
-                    if self.over:
-                        self.draw_ships(self.player2, left = (self.game.screen_width//2 + BOARD_WIDTH//2 - SQUARE_SIZE * 10 - 50), top = (self.game.screen_height//2 - BOARD_HEIGHT//2 + 100))
-                        self.draw_markers(self.player1, left = (self.game.screen_width//2 + BOARD_WIDTH//2 - SQUARE_SIZE * 10 - 50), top = (self.game.screen_height//2 - BOARD_HEIGHT//2 + 100))
-                        myfont = self.get_font(25)
-                        text = self.result + " wins!!!"
-                        textbox = myfont.render(text, 1, WHITE)
-                        self.game.screen.blit(textbox, (self.game.screen_width//2 - textbox.get_width()//2, 40))
-                        pygame.display.update()
-                        self.game.battleship_game_over = True 
+                        # Game over message when the game is over
+                        if self.over:
+                            self.draw_ships(self.player2, left = (self.game.screen_width//2 + BOARD_WIDTH//2 - SQUARE_SIZE * 10 - 50), top = (self.game.screen_height//2 - BOARD_HEIGHT//2 + 100))
+                            self.draw_markers(self.player1, left = (self.game.screen_width//2 + BOARD_WIDTH//2 - SQUARE_SIZE * 10 - 50), top = (self.game.screen_height//2 - BOARD_HEIGHT//2 + 100))
+                            # Make the sound effect when the game is over
+                            self.gameover_sound.play()
+                            myfont = self.get_font(25)
+                            text = self.result + " wins!!!"
+                            textbox = myfont.render(text, 1, WHITE)
+                            self.game.screen.blit(textbox, (self.game.screen_width//2 - textbox.get_width()//2, 40))
+                            pygame.display.update()
+                            self.game.battleship_game_over = True 
                         
         # Computer moves
         if not self.game.battleship_game_over and self.computer_turn:
+            pygame.time.wait(700)
             # Moves for normal AI
             if self.mode == "normal":
                 self.normal_ai()
             # Moves for hard AI
             elif self.mode == "hard":
                 self.hard_ai()
-            pygame.time.wait(300)
-                
+            
             self.draw_board()
                 
             # Game over message when the game is over
             if self.over:
                 self.draw_ships(self.player2, left = (self.game.screen_width//2 + BOARD_WIDTH//2 - SQUARE_SIZE * 10 - 50), top = (self.game.screen_height//2 - BOARD_HEIGHT//2 + 100))
                 self.draw_markers(self.player1, left = (self.game.screen_width//2 + BOARD_WIDTH//2 - SQUARE_SIZE * 10 - 50), top = (self.game.screen_height//2 - BOARD_HEIGHT//2 + 100))
+                # Make the sound effect when the game is over
+                self.gameover_sound.play()
                 myfont = self.get_font(25)
                 text = self.result + " wins!!!"
                 textbox = myfont.render(text, 1, WHITE)
@@ -298,6 +309,12 @@ class Battleship(State):
                  
     def load_assets(self):
         self.battleship_background = pygame.image.load(os.path.join('Assets', 'retro_background3.jpg'))
+        self.speaker_icon = pygame.image.load(os.path.join('Assets', 'speaker_icon.png'))
+        
+        # Sound effects
+        self.miss_sound = pygame.mixer.Sound(os.path.join('Assets', 'battleship_miss_sound.mp3'))
+        self.hit_sound = pygame.mixer.Sound(os.path.join('Assets', 'battleship_hit_sound.mp3'))
+        self.gameover_sound = pygame.mixer.Sound(os.path.join('Assets', 'gameover_sound.wav'))
 
     def get_font(self, size):
         return pygame.font.Font(os.path.join('Assets', 'font.ttf'), size)

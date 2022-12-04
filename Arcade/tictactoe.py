@@ -44,7 +44,7 @@ class Tictactoe(State):
             else: 
                 self.players.append(player1)
                 self.players.append(player2)
-                
+        
         self.initialize()
         self.load_assets()
         
@@ -57,6 +57,11 @@ class Tictactoe(State):
         pos -= 1
         row = pos // 3
         col = pos % 3
+        # Play the sound effect when making a move
+        if player == 'X':
+            self.X_sound.play()
+        else:
+            self.O_sound.play()
         self.grid[row][col] = player
             
     def check_for_winner(self):
@@ -171,6 +176,7 @@ class Tictactoe(State):
         
         # Option for the human player to go second (as 'O')
         if O_button.interact_button() == True:
+            pygame.time.wait(50)
             self.game.state_stack.pop()
             new_state = Tictactoe(self.game, 'O', self.max_depth_AI)
             new_state.enter_state() 
@@ -204,8 +210,9 @@ class Tictactoe(State):
                         if self.grid[cell_y][cell_x] is not None:
                             pass
                         else:
-                            self.grid[cell_y][cell_x] = player_char
-                            self.next_player()
+                            move = cell_y * 3 + (cell_x + 1)
+                            self.place_token(move)
+                            self.draw_board()
                     else:
                         pass
                     result = self.check_for_winner()
@@ -213,49 +220,70 @@ class Tictactoe(State):
                     #Check if the human player win
                     if result == player_char:
                         if result == PLAYER1:
+                            # Make the sound effect when the game is over
+                            self.gameover_sound.play()
                             label = myfont.render("Player wins!!!", 1, WHITE)
                             self.game.screen.blit(label, (self.game.screen_width//2 - BOARD_SIDE + 30, 40))
+                            pygame.display.update()
                             self.game.tictactoe_game_over = True
                         else:
+                            # Make the sound effect when the game is over
+                            self.gameover_sound.play()
                             label = myfont.render("Computer wins!!!", 1, WHITE)
                             self.game.screen.blit(label, (self.game.screen_width//2 - BOARD_SIDE + 30, 40))
+                            pygame.display.update()
                             self.game.tictactoe_game_over = True
                             
                     #Check for draw
                     elif result == True:
+                        # Make the sound effect when the game is over
+                        self.gameover_sound.play()
                         label = myfont.render("Draw!!!", 1, WHITE)
                         self.game.screen.blit(label, (self.game.screen_width//2 - BOARD_SIDE + 30, 40))
+                        pygame.display.update()
                         self.game.tictactoe_game_over = True
-                            
-                    self.draw_board()
                     
         #Check if the player playing is the AI
-        if player.is_automated() == True and not self.game.tictactoe_game_over:                
+        if player.is_automated() == True and not self.game.tictactoe_game_over:       
+            pygame.time.wait(500)         
             move = player.get_move()
             self.place_token(move)
+            self.draw_board()
             result = self.check_for_winner()
             
             #Check if the AI player win
             if result == player_char:
                 if result == PLAYER1:
+                    # Make the sound effect when the game is over
+                    self.gameover_sound.play()
                     label = myfont.render("Player wins!!!", 1, WHITE)
                     self.game.screen.blit(label, (self.game.screen_width//2 - BOARD_SIDE + 30, 40))
+                    pygame.display.update()
                     self.game.tictactoe_game_over = True
                 else:
+                    # Make the sound effect when the game is over
+                    self.gameover_sound.play()
                     label = myfont.render("Computer wins!!!", 1, WHITE)
                     self.game.screen.blit(label, (self.game.screen_width//2 - BOARD_SIDE + 30, 40))
+                    pygame.display.update()
                     self.game.tictactoe_game_over = True
                     
             #Check for draw
             elif result == True: 
+                # Make the sound effect when the game is over
+                self.gameover_sound.play()
                 label = myfont.render("Draw!!!", 1, WHITE)
                 self.game.screen.blit(label, (self.game.screen_width//2 - BOARD_SIDE + 30, 40))
+                pygame.display.update()
                 self.game.tictactoe_game_over = True  
-                      
-            self.draw_board()
 
     def load_assets(self):
         self.tictactoe_background = pygame.image.load(os.path.join('Assets', 'cyberpunk_background.jpg'))
+        
+        # Sound effects
+        self.X_sound = pygame.mixer.Sound(os.path.join('Assets', 'tictactoe_X_sound.wav'))
+        self.O_sound = pygame.mixer.Sound(os.path.join('Assets', 'tictactoe_O_sound.wav'))
+        self.gameover_sound = pygame.mixer.Sound(os.path.join('Assets', 'gameover_sound.wav'))
 
     def get_font(self, size):
         return pygame.font.Font(os.path.join('Assets', 'font.ttf'), size)

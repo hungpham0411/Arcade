@@ -14,6 +14,10 @@ class GameMenu(State):
     def __init__(self, game):
         State.__init__(self, game)
         self.load_assets()
+        
+        # Sound effects
+        pygame.mixer.music.load(os.path.join('Assets', 'menu_music.mp3'))   # Load the background music
+        pygame.mixer.music.play(-1) # Play the background music, value -1 in the parameter is to repeat the music indefinitely
 
     def render(self):
         # Render current state to the screen

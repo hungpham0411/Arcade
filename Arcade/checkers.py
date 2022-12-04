@@ -26,10 +26,8 @@ class Checkers(State):
         State.__init__(self, game)
         self.max_depth_AI = max_depth_AI
         self.game.checkers_max_depth_AI = max_depth_AI
-        
-        self.board = CheckersBoard()
         self.AI_player = CheckersAIPlayer(BLUE, self)
-        
+        self.board = CheckersBoard()
         self.load_assets()
         
     def get_board(self):
@@ -146,20 +144,29 @@ class Checkers(State):
                     pos = pygame.mouse.get_pos()
                     x = pos[0] // SQUARE_SIZE - 4 
                     y = (pos[1]-40) // SQUARE_SIZE 
-                    self.board.select(y,x)  
-                    self.draw_board()
-                
-                    if self.board.game_over:
-                        myfont = self.get_font(25)
-                        winner, winner_color = self.board.result
-                        text = winner + " wins!!!"
-                        textbox = myfont.render(text, 1, winner_color)
-                        self.game.screen.blit(textbox, (20, 20))
-                        pygame.display.update()
-                        self.game.checkers_game_over = True
+                    if x > 7 or y > 7:  # If the moves is out of the checkers board, pass
+                        pass 
+                    else:
+                        self.board.select(y, x, self.checkers_sound)  
+                        self.draw_board()
+                        
+                        if self.board.game_over:
+                            # Make the sound effect when the game is over
+                            self.gameover_sound.play()
+                            myfont = self.get_font(25)
+                            winner, winner_color = self.board.result
+                            text = winner + " wins!!!"
+                            textbox = myfont.render(text, 1, winner_color)
+                            self.game.screen.blit(textbox, (20, 20))
+                            pygame.display.update()
+                            self.game.checkers_game_over = True
         
         # Computer moves
         if not self.game.checkers_game_over and self.board.turn == BLUE:
+            if self.max_depth_AI > 4:
+                pygame.time.wait(200)
+            else:
+                pygame.time.wait(500)
             opponent = RED
             piece, move, skipped = self.AI_player.get_move()
             row, column = move
@@ -179,16 +186,12 @@ class Checkers(State):
                 self.board.result = ("Player", RED)
                 
             self.board.next_player()
-            
-            if self.max_depth_AI < 5:
-                pygame.time.wait(500)
-            else:
-                pygame.time.wait(200)
-                
             self.draw_board()
-            
+            self.checkers_sound.play()  # Play the sound effect when move a checkers piece
             # Game over message when the game is over
             if self.board.game_over:
+                # Make the sound effect when the game is over
+                self.gameover_sound.play()
                 myfont = self.get_font(25)
                 winner, winner_color = self.board.result
                 text = winner + " wins!!!"
@@ -199,7 +202,11 @@ class Checkers(State):
         
     def load_assets(self):
         self.checkers_background = pygame.image.load(os.path.join('Assets', 'retro_background2.jpg'))
-        self.crown_image = pygame.image.load(os.path.join('Assets', 'crown.png'))
+        self.crown_image = pygame.image.load(os.path.join('Assets', 'checkers_crown.png'))
+        
+        # Sound effects
+        self.checkers_sound = pygame.mixer.Sound(os.path.join('Assets', 'checkers_sound.mp3'))
+        self.gameover_sound = pygame.mixer.Sound(os.path.join('Assets', "gameover_sound.wav"))
         
     def get_font(self, size):
         return pygame.font.Font(os.path.join('Assets', 'font.ttf'), size)

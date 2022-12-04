@@ -6,6 +6,8 @@ RED = (250, 50, 100)
 GREEN = (0, 255, 0)
 YELLOW = (102,102,0)
 
+import pygame
+import os
 from checkers_players import Piece
 
 class CheckersBoard():
@@ -19,6 +21,7 @@ class CheckersBoard():
         
         self.game_over = False
         self.result = (None, None)  # (Player, Color)
+        
         self.initialize()
     
     # Initialize the grid
@@ -50,18 +53,15 @@ class CheckersBoard():
                     self.grid[i+5][j] = Piece(i+5,j,RED)
     
     # Select a piece based on the position passed from the player (row, column)
-    def select(self, row, column):
-        if row > 7 or column > 7:
-            return 
-        
+    def select(self, row, column, sound):
         # If a piece is selected
         if self.selected is not None:
-            result = self._make_move(row, column)
+            result = self._make_move(row, column, sound)
             
             # If moving the piece is unsuccessful 
             if not result:        
                 self.selected = None        # Reset the selected piece
-                self.select(row, column)    # Call the select function again
+                self.select(row, column, sound)    # Call the select function again
         
         piece = self.grid[row][column]
         # If another piece with the same color is selected
@@ -76,7 +76,7 @@ class CheckersBoard():
         return False
 
     # Check if the move is valid or not
-    def _make_move(self, row, column):
+    def _make_move(self, row, column, sound):
         if self.turn == RED:
             opponent = BLUE
         else:
@@ -85,6 +85,7 @@ class CheckersBoard():
         piece = self.grid[row][column]
         # Check if the piece is selected, the destination is a blank square and is in the list of valid moves for the piece
         if self.selected is not None and piece == -1 and (row, column) in self.valid_moves:
+            sound.play()    # Play the sound effect when move a checkers piece
             self.move_piece(self.selected, row, column)
             skipped = self.valid_moves[(row, column)]   # List of skipped pieces (The pieces that got erased when we perform a jump move)
             if skipped is not None:
