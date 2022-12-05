@@ -56,6 +56,8 @@ class ConnectFour(State):
         self.connectfour_sound.play()   # Sound effect when making a move
         self.grid[row][column] = player
         self.result = self.check_for_winner()
+        if self.result is None and self.check_for_draw():
+            self.result = "Draw"
             
     def check_for_winner(self):
         win = self.check_horizontal_win()
@@ -263,7 +265,7 @@ class ConnectFour(State):
                         elif self.result == self.AI_player.color:
                             text = "Computer wins!!!"
                             winner_color = self.AI_player.color
-                        else:
+                        elif self.result == "Draw":
                             text = "Draw!!!"
                             winner_color = WHITE
                         myfont = self.get_font(25)
@@ -289,7 +291,7 @@ class ConnectFour(State):
                 elif self.result == self.AI_player.color:
                     text = "Computer wins!!!"
                     winner_color = self.AI_player.color
-                else:
+                elif self.result == "Draw":
                     text = "Draw!!!"
                     winner_color = WHITE
                 myfont = self.get_font(25)

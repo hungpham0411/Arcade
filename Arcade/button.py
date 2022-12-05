@@ -1,4 +1,5 @@
 import pygame
+import os
 
 WHITE = (255,255,255)
 
@@ -18,6 +19,7 @@ class Button:
         self.width = width     # The width of the button
         self.height = height   # The height of the button
         
+        self.click_sound = pygame.mixer.Sound(os.path.join('Assets', 'button_click_sound.wav'))
         self.draw_button()
         
     def interact_button(self):
@@ -33,6 +35,7 @@ class Button:
             if self.img is not None:
                 self.surface.blit(self.img, self.img_rect)
             if pygame.mouse.get_pressed()[0] == 1: # Check if the button is clicked
+                self.click_sound.play()
                 action = True
 
         return action

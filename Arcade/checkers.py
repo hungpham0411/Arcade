@@ -75,7 +75,7 @@ class Checkers(State):
                         y = self.game.screen_height//2 - BOARD_HEIGHT//2 + row * SQUARE_SIZE + SQUARE_SIZE//2
                         pygame.draw.circle(self.game.screen, self.player_color, (x, y), 30)
                         
-                        # If piece is a king piece
+                        # If the piece becomes a king piece
                         if piece.king:  
                             crown = pygame.transform.scale(self.crown_image, (44,25))
                             self.game.screen.blit(crown, (x - crown.get_width()//2, y - crown.get_height()//2))
@@ -85,7 +85,7 @@ class Checkers(State):
                         y = self.game.screen_height//2 - BOARD_HEIGHT//2 + row * SQUARE_SIZE + SQUARE_SIZE//2
                         pygame.draw.circle(self.game.screen, self.AI_player.color, (x, y), 30)
                         
-                        # If piece is a king piece
+                        # If the piece becomes a king piece
                         if piece.king:  
                             crown = pygame.transform.scale(self.crown_image, (44,25))
                             self.game.screen.blit(crown, (x - crown.get_width()//2, y - crown.get_height()//2))

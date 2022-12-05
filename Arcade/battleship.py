@@ -315,8 +315,8 @@ class Battleship(State):
         
         # Sound effects
         self.miss_sound = pygame.mixer.Sound(os.path.join('Assets', 'battleship_miss_sound.mp3'))
-        self.hit_sound = pygame.mixer.Sound(os.path.join('Assets', 'battleship_hit_sound2.wav'))
-        self.explode_sound = pygame.mixer.Sound(os.path.join('Assets', 'battleship_hit_sound.mp3'))
+        self.hit_sound = pygame.mixer.Sound(os.path.join('Assets', 'battleship_hit_sound.wav'))
+        self.explode_sound = pygame.mixer.Sound(os.path.join('Assets', 'battleship_explode_sound.mp3'))
         self.gameover_sound = pygame.mixer.Sound(os.path.join('Assets', 'gameover_sound.wav'))
 
     def get_font(self, size):
