@@ -25,8 +25,8 @@ class ConnectFour(State):
         self.players = []
         self.grid = []
         self.turn = -1
-        self.max_depth_AI = max_depth_AI
         self.player_color = player_color
+        self.max_depth_AI = max_depth_AI
         self.game.connectfour_player_color = player_color
         self.game.connectfour_max_depth_AI = max_depth_AI
         
@@ -157,6 +157,7 @@ class ConnectFour(State):
                 pygame.draw.rect(self.game.screen, BLUE, square)
                 pygame.draw.circle(self.game.screen, WHITE, (self.game.screen_width//2 - BOARD_WIDTH//2 + column * SQUARE_SIZE + SQUARE_SIZE//2, 
                                                              self.game.screen_height//2 - BOARD_HEIGHT//2 + row * SQUARE_SIZE + SQUARE_SIZE + SQUARE_SIZE//2), 35)
+        
         vertical_border_left = pygame.Rect(self.game.screen_width//2 - BOARD_WIDTH//2 - 6, self.game.screen_height//2 - BOARD_HEIGHT//2 + SQUARE_SIZE, 6, BOARD_HEIGHT - SQUARE_SIZE + 6)
         vertical_border_right = pygame.Rect(self.game.screen_width//2 + BOARD_WIDTH//2, self.game.screen_height//2 - BOARD_HEIGHT//2 + SQUARE_SIZE, 6, BOARD_HEIGHT - SQUARE_SIZE + 6)
         horizontal_border_top = pygame.Rect(self.game.screen_width//2 - BOARD_WIDTH//2 - 6, self.game.screen_height//2 - BOARD_HEIGHT//2  + SQUARE_SIZE - 6, BOARD_WIDTH + 12, 6)
@@ -171,9 +172,11 @@ class ConnectFour(State):
     def draw_pieces(self):
         for row in range(6):
             for column in range(7):
+                # Draw the RED pieces
                 if self.grid[row][column] == RED:
                     pygame.draw.circle(self.game.screen, RED, (self.game.screen_width//2 - BOARD_WIDTH//2 + column * SQUARE_SIZE + SQUARE_SIZE//2, 
                                                                self.game.screen_height//2 - BOARD_HEIGHT//2 + row * SQUARE_SIZE + SQUARE_SIZE + SQUARE_SIZE//2), 35)
+                # Draw the YELLOW pieces
                 elif self.grid[row][column] == YELLOW:
                     pygame.draw.circle(self.game.screen, YELLOW, (self.game.screen_width//2 - BOARD_WIDTH//2 + column * SQUARE_SIZE + SQUARE_SIZE//2, 
                                                                   self.game.screen_height//2 - BOARD_HEIGHT//2 + row * SQUARE_SIZE + SQUARE_SIZE + SQUARE_SIZE//2), 35)    
@@ -265,7 +268,6 @@ class ConnectFour(State):
                             winner_color = WHITE
                         myfont = self.get_font(25)
                         textbox = myfont.render(text, 1, winner_color)
-                        self.draw_board()
                         self.game.screen.blit(textbox, (self.game.screen_width//2 - textbox.get_width()//2, SQUARE_SIZE - 10))
                         pygame.display.update()
                         self.game.connectfour_game_over = True  
@@ -292,7 +294,6 @@ class ConnectFour(State):
                     winner_color = WHITE
                 myfont = self.get_font(25)
                 textbox = myfont.render(text, 1, winner_color)
-                self.draw_board()
                 self.game.screen.blit(textbox, (self.game.screen_width//2 - textbox.get_width()//2, SQUARE_SIZE - 10))
                 pygame.display.update()
                 self.game.connectfour_game_over = True

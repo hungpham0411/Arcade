@@ -98,13 +98,15 @@ class CheckersAIPlayer:
                 return self.king_jump(board, self.color)
             elif self.could_be_king(board, self.color) != False:
                 return self.could_be_king(board, self.color)
-            elif self.could_jump(board, self.color) != False:
-                return self.could_jump(board, self.color)
+            #elif self.could_jump(board, self.color) != False:
+                #return self.could_jump(board, self.color)
 
         # AI hard move
         if self.max_depth > 4:
             if self.could_double_jump(board, self.color) != False:
                 return self.could_double_jump(board, self.color)
+            elif self.could_jump_and_be_king(board, self.color) != False:
+                return self.could_jump_and_be_king(board, self.color)
             elif self.king_jump(board, self.color) != False:
                 return self.king_jump(board, self.color)
             elif self.could_be_king(board, self.color) != False:

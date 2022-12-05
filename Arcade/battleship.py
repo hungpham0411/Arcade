@@ -55,20 +55,22 @@ class Battleship(State):
         # If the move is on the opponent ships
         if move in opponent.indexes: 
             player.search[move] = "H"
-            # Play the sound effect for hit moves 
+            # Play the sound effect for hit moves
             self.hit_sound.play()
             hit = True
             # Check if ship is sunk ("S")
             for ship in opponent.ships:
-                sunk = True
-                # Check if there is still any square of the ship that is not hit
-                for index in ship.indexes: 
-                    if player.search[index] == "U":
-                        sunk = False
-                        break
-                if sunk:
-                    for index in ship.indexes:
-                        player.search[index] = "S"
+                if move in ship.indexes:
+                    sunk = True
+                    # Check if there is still any square of the ship that is not hit
+                    for index in ship.indexes: 
+                        if player.search[index] == "U":
+                            sunk = False
+                            break
+                    if sunk:
+                        self.explode_sound.play()
+                        for index in ship.indexes:
+                            player.search[index] = "S"
         # If the move is not on the opponent ships
         else: 
             player.search[move] = "M"
@@ -189,7 +191,7 @@ class Battleship(State):
                 height = ship.size * SQUARE_SIZE - 2 * INDENT
             rectangle = pygame.Rect(x, y, width, height)
             pygame.draw.rect(self.game.screen, GREEN, rectangle, border_radius = 15)
-    
+        
     # Draw the Player and Computer Text
     def draw_players_text(self):
         score_font = self.get_font(20)
@@ -284,7 +286,7 @@ class Battleship(State):
                         
         # Computer moves
         if not self.game.battleship_game_over and self.computer_turn:
-            pygame.time.wait(700)
+            pygame.time.wait(1000)
             # Moves for normal AI
             if self.mode == "normal":
                 self.normal_ai()
@@ -313,7 +315,8 @@ class Battleship(State):
         
         # Sound effects
         self.miss_sound = pygame.mixer.Sound(os.path.join('Assets', 'battleship_miss_sound.mp3'))
-        self.hit_sound = pygame.mixer.Sound(os.path.join('Assets', 'battleship_hit_sound.mp3'))
+        self.hit_sound = pygame.mixer.Sound(os.path.join('Assets', 'battleship_hit_sound2.wav'))
+        self.explode_sound = pygame.mixer.Sound(os.path.join('Assets', 'battleship_hit_sound.mp3'))
         self.gameover_sound = pygame.mixer.Sound(os.path.join('Assets', 'gameover_sound.wav'))
 
     def get_font(self, size):

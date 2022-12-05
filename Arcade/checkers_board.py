@@ -1,23 +1,21 @@
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-STRONG_BLUE = (0, 0, 102)
-BLUE = (50, 150, 200)
-RED = (250, 50, 100)
-GREEN = (0, 255, 0)
-YELLOW = (102,102,0)
-
 import pygame
 import os
 from checkers_players import Piece
 
+BLUE = (50, 150, 200)
+RED = (250, 50, 100)
+
 class CheckersBoard():
-    def __init__(self):
+    def __init__(self, player_color, AI_player_color):
+        self.player_color = player_color
+        self.AI_player_color = AI_player_color
         self.grid = []
         self.selected = None
-        self.turn = RED             # Turn of the player: {RED: player, BLUE: computer}
+        self.turn = -1             
         self.valid_moves = {}       # Number of valid moves for the selected piece (reset when change turn)
         self.red_left = self.blue_left = 12     # Number of pieces for player and computer
         self.red_kings = self.blue_kings = 0    # Number of king pieces for player and computer
+        self.red_removed = self.blue_removed = 0    # Number of removed pieces for player and computer
         
         self.game_over = False
         self.result = (None, None)  # (Player, Color)
@@ -41,16 +39,17 @@ class CheckersBoard():
                     elif j % 2 == 1:
                         row.append(-1)
             self.grid.append(row)
+        self.turn = RED
         
         for i in range(3):
             for j in range(len(self.grid[i])):
                 if self.grid[i][j] == -1:
-                    self.grid[i][j] = Piece(i,j,BLUE)
+                    self.grid[i][j] = Piece(i,j,self.AI_player_color)
                     
         for i in range(3):
             for j in range(len(self.grid[i+5])):
                 if self.grid[i+5][j] == -1:
-                    self.grid[i+5][j] = Piece(i+5,j,RED)
+                    self.grid[i+5][j] = Piece(i+5,j,self.player_color)
     
     # Select a piece based on the position passed from the player (row, column)
     def select(self, row, column, sound):
@@ -95,12 +94,12 @@ class CheckersBoard():
             # check if the opponent has any valid move to place on the board
             if self.red_left <= 0 or self.blue_left <= 0 or len(self.get_all_valid_moves(opponent)) == 0:
                 self.game_over = True
-                self.result = ("Player", RED) if self.turn == RED else ("Computer", BLUE)
+                self.result = ("Player", self.player_color) if self.turn == self.player_color else ("Computer", self.AI_player_color)
         
             # Check if the current player has any valid move to place on the board
             elif len(self.get_all_valid_moves(self.turn)) == 0:
                 self.game_over = True
-                self.result = ("Computer", BLUE) if self.turn == RED else ("Player", RED)
+                self.result = ("Computer", self.AI_player_color) if self.turn == self.player_color else ("Player", self.player_color)
                 
             self.next_player()
             
@@ -129,8 +128,10 @@ class CheckersBoard():
             if piece != '-' and piece != -1:
                 if piece.color == BLUE:
                     self.blue_left -= 1
+                    self.blue_removed += 1
                 else:
                     self.red_left -= 1
+                    self.red_removed += 1
 
     def next_player(self):
         self.valid_moves = {}
@@ -165,11 +166,11 @@ class CheckersBoard():
         right = piece.column + 1
         row = piece.row
 
-        if piece.color == RED or piece.king:
+        if piece.color == self.player_color or piece.king:
             moves.update(self.traverse_left(row -1, max(row-3, -1), -1, piece.color, left))
             moves.update(self.traverse_right(row -1, max(row-3, -1), -1, piece.color, right))
             
-        if piece.color == BLUE or piece.king:
+        if piece.color == self.AI_player_color or piece.king:
             moves.update(self.traverse_left(row +1, min(row+3, 8), 1, piece.color, left))
             moves.update(self.traverse_right(row +1, min(row+3, 8), 1, piece.color, right))
         

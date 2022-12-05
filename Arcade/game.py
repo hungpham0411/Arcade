@@ -1,4 +1,5 @@
 import pygame
+import os
 from game_menu import GameMenu
 import tictactoe
 import pong
@@ -15,6 +16,8 @@ class Game():
         #Screen resolution
         self.screen_width, self.screen_height = 1280, 720
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
+        arcade_icon = pygame.image.load(os.path.join('Assets', 'arcade_icon.png'))
+        pygame.display.set_icon(arcade_icon)
         self.running, self.playing = True, True
         
         # Contain the states and load them
@@ -39,6 +42,7 @@ class Game():
         
         # Checkers
         self.checkers_game_over = False
+        self.checkers_player_color = None
         self.checkers_max_depth_AI = None
         
         # ConnectFour
@@ -77,7 +81,7 @@ class Game():
             if self.checkers_game_over == True:
                 pygame.time.delay(3000)
                 self.state_stack.pop()
-                new_state = checkers.Checkers(self, self.checkers_max_depth_AI)
+                new_state = checkers.Checkers(self, self.checkers_player_color, self.checkers_max_depth_AI)
                 new_state.enter_state()
                 self.checkers_game_over = False
                 

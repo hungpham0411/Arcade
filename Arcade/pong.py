@@ -93,16 +93,16 @@ class Pong(State):
         self.draw_score_board()
         
         win_font = self.get_font(25)
-        # The computer wins the series if wins 10 games
-        if self.computer_win == 10: 
+        # The computer wins the series if wins 5 games
+        if self.computer_win == 5: 
             # Make the sound effect when the game is over
             self.gameover_sound.play()
             computer_win_text = win_font.render("Computer wins!!!", 1, WHITE)
             self.game.screen.blit(computer_win_text, (self.game.screen_width//2 - computer_win_text.get_width()//2, 40))
             self.game.pong_game_over = True
             
-        # The human player wins the series if wins 10 games
-        if self.player_win == 10: 
+        # The human player wins the series if wins 5 games
+        if self.player_win == 5: 
             # Make the sound effect when the game is over
             self.gameover_sound.play()
             player_win_text = win_font.render("Player wins!!!", 1, WHITE)

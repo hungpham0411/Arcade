@@ -22,12 +22,19 @@ GREEN = (0, 255, 0)
 YELLOW = (102,102,0)
 
 class Checkers(State):
-    def __init__(self, game, max_depth_AI):
+    def __init__(self, game, player_color, max_depth_AI):
         State.__init__(self, game)
+        self.player_color = player_color
         self.max_depth_AI = max_depth_AI
+        self.game.checkers_player_color = player_color
         self.game.checkers_max_depth_AI = max_depth_AI
-        self.AI_player = CheckersAIPlayer(BLUE, self)
-        self.board = CheckersBoard()
+        
+        if player_color == RED:
+            self.AI_player = CheckersAIPlayer(BLUE, self)
+        else:
+            self.AI_player = CheckersAIPlayer(RED, self)
+            
+        self.board = CheckersBoard(self.player_color, self.AI_player.color)
         self.load_assets()
         
     def get_board(self):
@@ -63,20 +70,20 @@ class Checkers(State):
             for column in range(8):
                 piece = self.board.grid[row][column]
                 if piece != '-' and piece != -1:
-                    if piece.color == RED:
-                        x = self.game.screen_width//2 - BOARD_WIDTH//2 + column * SQUARE_SIZE + 40
-                        y = self.game.screen_height//2 - BOARD_HEIGHT//2 + row * SQUARE_SIZE + 40
-                        pygame.draw.circle(self.game.screen, RED, (x, y), 30)
+                    if piece.color == self.player_color:
+                        x = self.game.screen_width//2 - BOARD_WIDTH//2 + column * SQUARE_SIZE + SQUARE_SIZE//2
+                        y = self.game.screen_height//2 - BOARD_HEIGHT//2 + row * SQUARE_SIZE + SQUARE_SIZE//2
+                        pygame.draw.circle(self.game.screen, self.player_color, (x, y), 30)
                         
                         # If piece is a king piece
                         if piece.king:  
                             crown = pygame.transform.scale(self.crown_image, (44,25))
                             self.game.screen.blit(crown, (x - crown.get_width()//2, y - crown.get_height()//2))
                             
-                    elif piece.color == BLUE:
-                        x = self.game.screen_width//2 - BOARD_WIDTH//2 + column * SQUARE_SIZE + 40
-                        y = self.game.screen_height//2 - BOARD_HEIGHT//2 + row * SQUARE_SIZE + 40
-                        pygame.draw.circle(self.game.screen, BLUE, (x, y), 30)
+                    elif piece.color == self.AI_player.color:
+                        x = self.game.screen_width//2 - BOARD_WIDTH//2 + column * SQUARE_SIZE + SQUARE_SIZE//2
+                        y = self.game.screen_height//2 - BOARD_HEIGHT//2 + row * SQUARE_SIZE + SQUARE_SIZE//2
+                        pygame.draw.circle(self.game.screen, self.AI_player.color, (x, y), 30)
                         
                         # If piece is a king piece
                         if piece.king:  
@@ -97,11 +104,32 @@ class Checkers(State):
         selected_move = pygame.Rect(self.game.screen_width//2 - BOARD_WIDTH//2 + move.column * SQUARE_SIZE, 40 + move.row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE)
         pygame.draw.rect(self.game.screen, YELLOW, selected_move)
         self.draw_pieces()
+    
+    # Draw the scoreboard for the player and computer
+    def draw_score_board(self):
+        score_font = self.get_font(20)
+        red_score = score_font.render(f"{self.board.blue_removed}", 1, WHITE)
+        blue_score = score_font.render(f"{self.board.red_removed}", 1, WHITE)
+        
+        rect = pygame.Rect(self.game.screen_width//2 + BOARD_WIDTH//2 + 50, self.game.screen_height//2, 160, 80)
+        pygame.draw.rect(self.game.screen, BLACK, rect)
+        
+        red_score_rect = red_score.get_rect(center = (self.game.screen_width//2 + BOARD_WIDTH//2 + 90, self.game.screen_height//2 + 40))
+        self.game.screen.blit(red_score, red_score_rect)
+        pygame.draw.circle(self.game.screen, RED, (self.game.screen_width//2 + BOARD_WIDTH//2 + 170, self.game.screen_height//2 + 40), 30)
+        
+        rect1 = pygame.Rect(self.game.screen_width//2 + BOARD_WIDTH//2 + 50, self.game.screen_height//2 + 100, 160, 80)
+        pygame.draw.rect(self.game.screen, BLACK, rect1)
+        
+        blue_score_rect = blue_score.get_rect(center = (self.game.screen_width//2 + BOARD_WIDTH//2 + 90, self.game.screen_height//2 + 140))
+        self.game.screen.blit(blue_score, blue_score_rect)
+        pygame.draw.circle(self.game.screen, BLUE, (self.game.screen_width//2 + BOARD_WIDTH//2 + 170, self.game.screen_height//2 + 140), 30)
         
     # Draw the Checkers board on the game window
     def draw_board(self):
         self.draw_grid(self.game.screen_width//2 - BOARD_WIDTH//2, self.game.screen_height//2 - BOARD_HEIGHT//2)
         self.draw_pieces()
+        self.draw_score_board()
         if not self.board.game_over:
             self.draw_selected_move(self.board.selected)
             self.draw_valid_moves(self.board.valid_moves)
@@ -115,6 +143,10 @@ class Checkers(State):
         # Buttons
         back_button = button.Button(self.game.screen_width - BUTTON_WIDTH - 10, 10, 
                                  "Back", self.get_font(17), BLACK, STRONG_BLUE, self.game.screen, BUTTON_WIDTH, BUTTON_HEIGHT)
+        red_button = button.Button(self.game.screen_width - BUTTON_WIDTH - 10, 20 + BUTTON_HEIGHT, 
+                                 "Red", self.get_font(17), BLACK, STRONG_BLUE, self.game.screen, BUTTON_WIDTH, BUTTON_HEIGHT)
+        blue_button = button.Button(self.game.screen_width - BUTTON_WIDTH - 10, 30 + BUTTON_HEIGHT*2,
+                                      "Blue", self.get_font(17), BLACK, STRONG_BLUE, self.game.screen, BUTTON_WIDTH, BUTTON_HEIGHT)
         #rules_button = button.Button(self.game.screen_width - BUTTON_WIDTH - 10, 10, 
                                  #"Rules", self.get_font(17), BLACK, BLUE, self.game.screen, BUTTON_WIDTH, BUTTON_HEIGHT)
         
@@ -122,6 +154,17 @@ class Checkers(State):
         if back_button.interact_button() == True:
             self.exit_state()   # Exit the current state which will move to the previous state
             pygame.time.wait(300)
+            
+        if red_button.interact_button() == True:
+            self.game.state_stack.pop()
+            new_state = Checkers(self.game, RED, self.max_depth_AI)
+            new_state.enter_state()
+            
+        if blue_button.interact_button() == True:
+            pygame.time.wait(50)
+            self.game.state_stack.pop()
+            new_state = Checkers(self.game, BLUE, self.max_depth_AI)
+            new_state.enter_state() 
             
         #if rules_button.interact_button(self.game.screen) == True:
         
@@ -139,7 +182,7 @@ class Checkers(State):
                     sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Player moves
-                if not self.game.checkers_game_over and self.board.turn == RED:
+                if not self.game.checkers_game_over and self.board.turn == self.player_color:
                     # Position of player's move
                     pos = pygame.mouse.get_pos()
                     x = pos[0] // SQUARE_SIZE - 4 
@@ -162,12 +205,12 @@ class Checkers(State):
                             self.game.checkers_game_over = True
         
         # Computer moves
-        if not self.game.checkers_game_over and self.board.turn == BLUE:
+        if not self.game.checkers_game_over and self.board.turn == self.AI_player.color:
             if self.max_depth_AI > 4:
                 pygame.time.wait(200)
             else:
                 pygame.time.wait(500)
-            opponent = RED
+            opponent = self.player_color
             piece, move, skipped = self.AI_player.get_move()
             row, column = move
             self.board.move_piece(piece, row, column)
@@ -178,12 +221,12 @@ class Checkers(State):
             # check if player has any valid move to place on the board
             if self.board.red_left <= 0 or self.board.blue_left <= 0 or len(self.board.get_all_valid_moves(opponent)) == 0:
                 self.board.game_over = True
-                self.board.result = ("Player", RED) if self.board.turn == RED else ("Computer", BLUE)
+                self.board.result = ("Player", self.player_color) if self.board.turn == self.player_color else ("Computer", self.AI_player.color)
             
             # Check if the current player has any valid move to place on the board
-            elif len(self.board.get_all_valid_moves(self.board.turn)) == 0:
+            elif len(self.board.get_all_valid_moves(self.AI_player.color)) == 0:
                 self.board.game_over = True
-                self.board.result = ("Player", RED)
+                self.board.result = ("Player", self.player_color)
                 
             self.board.next_player()
             self.draw_board()

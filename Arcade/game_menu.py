@@ -27,9 +27,9 @@ class GameMenu(State):
         # Buttons
         start_button = button.Button(self.game.screen_width//2 - BUTTON_WIDTH//2, self.game.screen_height//2, 
                                     "START", self.get_font(40), PURPLE, GREEN, self.game.screen, BUTTON_WIDTH, BUTTON_HEIGHT)
-        settings_button = button.Button(self.game.screen_width//2 - BUTTON_WIDTH//2, self.game.screen_height//2 + 100, 
-                                    "SETTINGS", self.get_font(40), PURPLE, GREEN, self.game.screen, BUTTON_WIDTH, BUTTON_HEIGHT)
-        exit_button = button.Button(self.game.screen_width//2 - BUTTON_WIDTH//2, self.game.screen_height//2 + 200, 
+        #settings_button = button.Button(self.game.screen_width//2 - BUTTON_WIDTH//2, self.game.screen_height//2 + 100, 
+                                    #"SETTINGS", self.get_font(40), PURPLE, GREEN, self.game.screen, BUTTON_WIDTH, BUTTON_HEIGHT)
+        exit_button = button.Button(self.game.screen_width//2 - BUTTON_WIDTH//2, self.game.screen_height//2 + 100, 
                                     "EXIT", self.get_font(40), PURPLE, GREEN, self.game.screen, BUTTON_WIDTH, BUTTON_HEIGHT)
 
         # Choose Start
@@ -41,8 +41,8 @@ class GameMenu(State):
             pygame.time.wait(300)
 
         # Choose Settings
-        if settings_button.interact_button() == True:
-            pass
+        #if settings_button.interact_button() == True:
+            #pass
 
         # Exit button to exit the game
         if exit_button.interact_button() == True:
