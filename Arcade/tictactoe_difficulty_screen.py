@@ -29,21 +29,26 @@ class Tictactoe_Difficulty_Screen(State):
 
         # Choose the Normal mode
         if normal_button.interact_button() == True:
-            pygame.mixer.music.pause()  # Pause the background music when choose a mode
+            pygame.mixer.music.unload() # Unload the music of the Game Hub
+            pygame.mixer.music.load(os.path.join('Assets', 'background_music.mp3')) # Load the background music when playing the games
+            pygame.mixer.music.set_volume(0.03) 
+            pygame.mixer.music.play(-1) # Repeat the song indefinitely
             new_state = Tictactoe(self.game, 'X', 2) # Create the Tictactoe state with a normal AI
             new_state.enter_state()
             pygame.time.wait(300)
 
         # Choose the Hard mode
         if hard_button.interact_button() == True:
-            pygame.mixer.music.pause()  # Pause the background music when choose a mode
+            pygame.mixer.music.unload() # Unload the music of the Game Hub
+            pygame.mixer.music.load(os.path.join('Assets', 'background_music.mp3')) # Load the background music when playing the games
+            pygame.mixer.music.set_volume(0.03) 
+            pygame.mixer.music.play(-1) # Repeat the song indefinitely
             new_state = Tictactoe(self.game, 'X', 6) # Create the Tictactoe state with a hard AI
             new_state.enter_state()
             pygame.time.wait(300)
 
         # Back button to return to the game hub screen 
         if back_button.interact_button() == True:
-            pygame.mixer.music.unpause()   # Unpause the background music when get back to the Game Hub
             self.exit_state()       # Exit the current state which will move to the previous state
             pygame.time.wait(300)
 

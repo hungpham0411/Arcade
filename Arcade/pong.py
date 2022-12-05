@@ -121,6 +121,10 @@ class Pong(State):
         
         # Back button to return to the pong difficulty screen
         if back_button.interact_button() == True:
+            pygame.mixer.music.unload()  # Unload the game background music when go back to the Game Hub
+            pygame.mixer.music.load(os.path.join('Assets', 'menu_music.mp3'))   # Load the Game Hub background music
+            pygame.mixer.music.set_volume(0.4)
+            pygame.mixer.music.play(-1) # Repeat the song indefinitely
             self.exit_state()   # Exit the current state which will move to the previous state
             pygame.time.wait(300)
             

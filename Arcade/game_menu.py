@@ -17,6 +17,7 @@ class GameMenu(State):
         
         # Sound effects
         pygame.mixer.music.load(os.path.join('Assets', 'menu_music.mp3'))   # Load the background music
+        pygame.mixer.music.set_volume(0.4)  # Set the volume lower than original (original: 1.0)
         pygame.mixer.music.play(-1) # Play the background music, value -1 in the parameter is to repeat the music indefinitely
 
     def render(self):

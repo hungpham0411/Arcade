@@ -150,21 +150,27 @@ class Checkers(State):
         #rules_button = button.Button(self.game.screen_width - BUTTON_WIDTH - 10, 10, 
                                  #"Rules", self.get_font(17), BLACK, BLUE, self.game.screen, BUTTON_WIDTH, BUTTON_HEIGHT)
         
-        # Back button to return to the pong difficulty screen
-        if back_button.interact_button() == True:
-            self.exit_state()   # Exit the current state which will move to the previous state
-            pygame.time.wait(300)
-            
+        # Option for the human player to go first (as RED)
         if red_button.interact_button() == True:
             self.game.state_stack.pop()
             new_state = Checkers(self.game, RED, self.max_depth_AI)
             new_state.enter_state()
-            
+        
+        # Option for the human player to go second (as BLUE)
         if blue_button.interact_button() == True:
             pygame.time.wait(50)
             self.game.state_stack.pop()
             new_state = Checkers(self.game, BLUE, self.max_depth_AI)
             new_state.enter_state() 
+        
+        # Back button to return to the checkers difficulty screen
+        if back_button.interact_button() == True:
+            pygame.mixer.music.unload()  # Unload the game background music when go back to the Game Hub
+            pygame.mixer.music.load(os.path.join('Assets', 'menu_music.mp3'))   # Load the Game Hub background music
+            pygame.mixer.music.set_volume(0.4)
+            pygame.mixer.music.play(-1) # Repeat the song indefinitely
+            self.exit_state()   # Exit the current state which will move to the previous state
+            pygame.time.wait(300)
             
         #if rules_button.interact_button(self.game.screen) == True:
         
